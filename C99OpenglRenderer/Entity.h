@@ -1,6 +1,7 @@
 #ifndef ENTITYCLASS_H
 #define ENTITYCLASS_H
 
+typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
 typedef struct TrailPoint {
@@ -14,6 +15,7 @@ typedef struct Entity {
 	size_t trailSize;
 
 	Mesh* mesh;
+	Texture* tex;
 	Shader* shader;
 	Shader* TrailShader;
 	TrailPoint* trp;
@@ -30,6 +32,8 @@ typedef struct Entity {
 	void (*setVertexShader)(struct Entity*, const char*);
 	void (*setFragmentShader)(struct Entity*, const char*);
 	void (*setTrail)(struct Entity*, size_t);
+
+	void (*setTexture)(struct Entity*, const char*);
 
 	unsigned int vbo;
 	unsigned int ibo;

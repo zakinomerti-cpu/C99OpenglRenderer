@@ -3,9 +3,14 @@
 #include "stdlib.h"
 #include "GL/glew.h"
 #include "string.h"
+#include "Texture.h"
 
 #include "Mesh.h"
 #include "Shader.h"
+
+void setTexture(Entity* ent, const char* path) {
+	ent->tex = Texture_new(path, ent->shader->shaderProgram);
+}
 
 const char* standart_vs =
 "#version 120\n"
@@ -24,9 +29,9 @@ const char* standart_fs =
 "#version 120\n"
 "varying vec3 vNormal;"
 "varying vec2 vTexCoord;"
-"uniform sampler2D texSampler;\n"
+"uniform sampler2D u_tex;\n"
 "void main() {\n"
-"    gl_FragColor = vec4(vTexCoord, 0.0f, 1.0f);\n"
+"    gl_FragColor = texture2D(u_tex, vTexCoord);\n"
 "}";
 
 const char* trail_vs =
@@ -61,6 +66,7 @@ void setMesh(Entity* ent, Mesh* mesh) {
 	ent->isMeshInit = 1;
 }
 
+//добавляй текстуры только после entityInit
 void entityInit(Entity* ent) {
 	if (ent->mesh == NULL) {
 		printf("Entity %s mesh does not init", ent->entityName);
@@ -151,6 +157,9 @@ void draw(Entity* ent) {
 	glVertexAttribPointer(ent->texCrdAttrib, 2, GL_FLOAT, GL_FALSE,
 		8 * sizeof(float), (void*)(6 * sizeof(float)));
 
+
+	if (ent->tex != NULL)
+		ent->tex->bindTexture(ent->tex);
 	glDrawElements(GL_TRIANGLES, ent->mesh->indexCount, GL_UNSIGNED_BYTE, 0);
 
 	glDisableVertexAttribArray(ent->texCrdAttrib);
@@ -158,6 +167,9 @@ void draw(Entity* ent) {
 	glDisableVertexAttribArray(ent->posAttrib);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	if (ent->tex != NULL)
+		ent->tex->unbindTexture(ent->tex);
 
 	glPopMatrix();
 	glUseProgram(0);
@@ -234,6 +246,7 @@ Entity* Entity_new(const char* name) {
 	ent->sizey = 1;
 	ent->sizez = 1;
 
+	ent->tex = NULL;
 	ent->mesh = NULL;
 	ent->shader = NULL;
 
@@ -254,6 +267,7 @@ Entity* Entity_new(const char* name) {
 
 	ent->vbo = 0;
 	ent->ibo = 0;
+	ent->setTexture = setTexture;
 
 	ent->posAttrib = 0;
 	ent->normAttrib = 0;

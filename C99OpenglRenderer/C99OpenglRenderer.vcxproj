@@ -141,6 +141,7 @@
     <ClCompile Include="platform.h" />
     <ClCompile Include="Scene.c" />
     <ClCompile Include="Shader.c" />
+    <ClCompile Include="Texture.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataArray.h" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
