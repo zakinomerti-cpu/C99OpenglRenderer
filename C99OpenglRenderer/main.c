@@ -14,7 +14,7 @@ void display() {
 
 void init() {
 	scn = Scene_new(1024);
-	Entity* ent = Entity_new("13");
+	Entity* ent = Entity_new("cube");
 	ent->setMesh(ent, createCube());
 	ent->entityInit(ent);
 	scn->addEntity(scn, ent);
