@@ -4,10 +4,11 @@
 #include "dataArray.h"
 
 void addToDataArr(dataArr* arr, void* data, size_t dataSize) {
+	(void)dataSize;
 	if (!arr) return;
 	if (arr->size >= arr->capacity) {
 		arr->capacity = (arr->capacity == 0) ? 2 : arr->capacity * 2;
-		void** tmp = realloc(arr->data, sizeof(void*)*arr->capacity);
+		void** tmp = realloc(arr->data, sizeof(void*) * arr->capacity);
 		if (!tmp) return;
 		arr->data = tmp;
 	}
@@ -20,12 +21,14 @@ void addToDataArr(dataArr* arr, void* data, size_t dataSize) {
 	}
 	else
 		arr->data[arr->size] = NULL;
+	arr->data[arr->size] = data;
 	arr->size += 1;
 }
 
 void* getByIndex(dataArr* arr, size_t index) {
 	if (!arr) return NULL;
 	if (index >= arr->size || index < 0) return NULL;
+	if (index >= arr->size) return NULL;
 	return arr->data[index];
 }
 
@@ -58,6 +61,7 @@ void dataArr_delete(dataArr* arr) {
 
 	arr->addToDataArr = NULL;
 	arr->getByIndex = NULL;
+	free(arr->data);
 	free(arr);
 	arr = NULL;
 	return;
