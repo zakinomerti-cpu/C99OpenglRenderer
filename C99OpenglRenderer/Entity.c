@@ -130,6 +130,9 @@ void draw(Entity* ent) {
 	glScalef(ent->sizex, ent->sizey, ent->sizez);
 
 	Component* cmp = ((Component*)ent->component->getByIndex(ent->component, 0));
+	GLuint* vbo = cmp->LocData->getByIndex(cmp->LocData, 0);
+	Mesh* mesh = (Mesh*)cmp->InData;
+	GLuint a = (*vbo);
 	cmp->Bind(cmp);
 
 	glEnableVertexAttribArray(ent->posAttrib);
@@ -147,7 +150,7 @@ void draw(Entity* ent) {
 
 	if (ent->tex != NULL)
 		ent->tex->bindTexture(ent->tex);
-	glDrawElements(GL_TRIANGLES, ent->mesh->indexCount, GL_UNSIGNED_BYTE, 0);
+	glDrawElements(GL_TRIANGLES, ((Mesh*)cmp->InData)->indexCount, GL_UNSIGNED_BYTE, 0);
 
 	glDisableVertexAttribArray(ent->texCrdAttrib);
 	glDisableVertexAttribArray(ent->normAttrib);

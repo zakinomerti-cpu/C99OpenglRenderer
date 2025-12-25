@@ -16,7 +16,9 @@ void init() {
 	Entity* ent = Entity_new("cube");
 	ent->setMesh(ent, createCube());
 	ent->entityInit(ent);
-	//ent->setTexture(ent, "sky.bmp");
+	ent->setTexture(ent, "sky.bmp");
+	ent->setPosition(ent, 0, 0, -3);
+	ent->setRotation(ent, 45, 45, 0);
 	scn->addEntity(scn, ent);
 }
 
