@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="ArbTest/ArbTest.vcxproj" Id="f7776e41-847c-4799-a998-8fd2fd03f687" />
+  <Project Path="C99OpenglRenderer/C99OpenglRenderer.vcxproj" Id="9d2dcf10-80e9-43f4-9c55-26a3184480a3" />
+</Solution>
