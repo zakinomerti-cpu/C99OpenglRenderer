@@ -7,26 +7,27 @@ typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
 
+typedef struct dataArr dataArr;
+
 typedef struct Component {
 	void (*Init)(struct Component*);
-	void (*Use)(struct Component*);
-	void (*addChild)(struct Component*, struct Component*);
-	void (*removeChild)(struct Component*, struct Component*);
+	void (*Bind)(struct Component*);
+	void (*UnBind)(struct Component*);
+	void (*AddChild)(struct Component*, struct Component*);
+	void (*RemoveChild)(struct Component*, struct Component*);
+	void (*DeleteComponent)(struct Component*);
 
 	struct Component* parentCmp;
 	Entity* parentEntity;
 
-	int size;
-	int capacity;
-	struct Component** child;
-
 	void* InData;
-	void** LocData;
+	dataArr* child;
+	dataArr* LocData;
 } Component;
 
-Component* MeshComponent_new(Entity*, Mesh*);
+Component* MeshComponent_new(Component* prnt, Entity* ent, Mesh* mesh);
 Component* ShaderComponent_new(Entity*, Shader*);
-Component* TextureComponent_new(Entity*, Shader*);
+Component* TextureComponent_new(Entity*, Texture*);
 Component* RenderComponent_new(Entity*);
 
 #endif

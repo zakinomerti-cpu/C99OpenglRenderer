@@ -4,6 +4,7 @@
 #include "GL/glew.h"
 #include "string.h"
 #include "Texture.h"
+#include "dataArray.h"
 
 #include "Mesh.h"
 #include "Shader.h"

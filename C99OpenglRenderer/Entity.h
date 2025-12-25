@@ -1,9 +1,11 @@
 #ifndef ENTITYCLASS_H
 #define ENTITYCLASS_H
 
+typedef struct dataArr dataArr;
 typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
+typedef struct Component Component;
 typedef struct TrailPoint {
 	float x; float y;
 } TrailPoint;
@@ -53,6 +55,8 @@ typedef struct Entity {
 
 	char* vertexShader;
 	char* fragmentShader;
+
+	dataArr* component;
 
 } Entity;
 
