@@ -10,6 +10,15 @@
 #include "Mesh.h"
 #include "Shader.h"
 
+Component* Entity_getComponent(Entity* ent, ComponentType type) {
+	if (!ent || !ent->component) return NULL;
+	for (size_t i = 0; i < ent->component->size; i += 1) {
+		Component* cmp = (Component*)ent->component->getByIndex(ent->component, i);
+		if (cmp && cmp->type == type) return cmp;
+	}
+	return NULL;
+}
+
 void setTexture(Entity* ent, const char* path) {
 	ent->tex = Texture_new(path, ent->shader->shaderProgram);
 }
@@ -65,13 +74,22 @@ void setMesh(Entity* ent, Mesh* mesh) {
 		return;
 	}
 
-	Component* cmp = MeshComponent_new(NULL, NULL, mesh);
+	Component* cmp = MeshComponent_new(NULL, ent, mesh);
+	if (!cmp) return;
 	ent->component->addToDataArr(ent->component, cmp, sizeof(Component));
 	ent->isMeshInit = 1;
 }
 
-//добавляй текстуры только после entityInit
-void entityInit(Entity* ent) {
+	Component* cmp = Entity_getComponent(ent, ComponentType_Mesh);
+	if (!cmp) {
+		printf("Mesh component of entity %s does not init", ent->entityName);
+		return;
+	}
+	Component* cmp = Entity_getComponent(ent, ComponentType_Mesh);
+	if (!cmp) {
+		printf("Mesh component of entity %s does not init", ent->entityName);
+		return;
+	}
 
 	ent->shader = Shader_new("baseShader");
 	if (ent->vertexShader == NULL) ent->vertexShader = standart_vs;
@@ -295,13 +313,22 @@ void Entity_delete(Entity* ent) {
 
 	if(ent->shader)
 		Shader_delete(ent->shader);
-	if(ent->mesh)
-		Mesh_delete(ent->mesh);
+	Component* meshCmp = Entity_getComponent(ent, ComponentType_Mesh);
+	if (meshCmp && meshCmp->InData)
+		Mesh_delete((Mesh*)meshCmp->InData);
 	free(ent->entityName);
 	ent->entityName = NULL;
 
 	if (ent->vbo) glDeleteBuffers(1, &ent->vbo);
 	if (ent->ibo) glDeleteBuffers(1, &ent->ibo);
+
+	if (ent->component) {
+		for (size_t i = 0; i < ent->component->size; i += 1) {
+			Component* cmp = (Component*)ent->component->getByIndex(ent->component, i);
+			if (cmp && cmp->DeleteComponent) cmp->DeleteComponent(cmp);
+		}
+		dataArr_delete(ent->component);
+	}
 
 	free(ent);
 	ent = NULL;

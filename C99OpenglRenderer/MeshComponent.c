@@ -41,11 +41,11 @@ void unBind(Component* cmp) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-void addChild(Component* cmp1, Component* cmp2) { /* òóò íå ğåàëèçîâàíî*/ }
-void removeChild(Component* cmp1, Component* cmp2) { /* òóò íå ğåàëèçîâàíî*/ }
+void addChild(Component* cmp1, Component* cmp2) { /* Ã²Ã³Ã² Ã­Ã¥ Ã°Ã¥Ã Ã«Ã¨Ã§Ã®Ã¢Ã Ã­Ã®*/ }
+void removeChild(Component* cmp1, Component* cmp2) { /* Ã²Ã³Ã² Ã­Ã¥ Ã°Ã¥Ã Ã«Ã¨Ã§Ã®Ã¢Ã Ã­Ã®*/ }
 
-// òîëüêî âíå ïîòîêà opengl, åñëè çíàåøü
-// ÷òî êîìïîíåíò òî÷íî ïîéäåò íà óäàëåíèå
+// Ã²Ã®Ã«Ã¼ÃªÃ® Ã¢Ã­Ã¥ Ã¯Ã®Ã²Ã®ÃªÃ  opengl, Ã¥Ã±Ã«Ã¨ Ã§Ã­Ã Ã¥Ã¸Ã¼
+// Ã·Ã²Ã® ÃªÃ®Ã¬Ã¯Ã®Ã­Ã¥Ã­Ã² Ã²Ã®Ã·Ã­Ã® Ã¯Ã®Ã©Ã¤Ã¥Ã² Ã­Ã  Ã³Ã¤Ã Ã«Ã¥Ã­Ã¨Ã¥
 void DeleteComponent(Component* cmp) {
 	cmp->Init = NULL;
 	cmp->Bind = NULL;
@@ -77,6 +77,7 @@ Component* MeshComponent_new(Component* prnt, Entity* ent, Mesh* mesh) {
 	cmp->RemoveChild = removeChild;
 	cmp->DeleteComponent = DeleteComponent;
 
+	cmp->type = ComponentType_Mesh;
 	cmp->parentCmp = prnt;
 	cmp->parentEntity = ent;
 

@@ -11,5 +11,6 @@ typedef struct dataArr {
 
 dataArr* dataArr_new();
 void addToDataArr(dataArr*, void*, size_t);
+void dataArr_delete(dataArr* arr);
 
 #endif

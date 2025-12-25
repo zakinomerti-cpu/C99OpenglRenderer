@@ -5,7 +5,7 @@ typedef struct dataArr dataArr;
 typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
-typedef struct Component Component;
+#include "Component.h"
 typedef struct TrailPoint {
 	float x; float y;
 } TrailPoint;
@@ -62,5 +62,6 @@ typedef struct Entity {
 
 Entity* Entity_new(const char* name);
 void Entity_delete(Entity* ent);
+Component* Entity_getComponent(Entity* ent, ComponentType type);
 
 #endif

@@ -9,6 +9,14 @@ typedef struct Mesh Mesh;
 
 typedef struct dataArr dataArr;
 
+typedef enum ComponentType {
+	ComponentType_Unknown = 0,
+	ComponentType_Mesh,
+	ComponentType_Shader,
+	ComponentType_Texture,
+	ComponentType_Render
+} ComponentType;
+
 typedef struct Component {
 	void (*Init)(struct Component*);
 	void (*Bind)(struct Component*);
@@ -17,6 +25,7 @@ typedef struct Component {
 	void (*RemoveChild)(struct Component*, struct Component*);
 	void (*DeleteComponent)(struct Component*);
 
+	ComponentType type;
 	struct Component* parentCmp;
 	Entity* parentEntity;
 
