@@ -5,6 +5,7 @@
 #include "string.h"
 #include "Texture.h"
 #include "dataArray.h"
+#include "Component.h"
 
 #include "Mesh.h"
 #include "Shader.h"
@@ -63,16 +64,14 @@ void setMesh(Entity* ent, Mesh* mesh) {
 		printf("Mesh of entity %s does not init", ent->entityName);
 		return;
 	}
-	ent->mesh = mesh;
+
+	Component* cmp = MeshComponent_new(NULL, NULL, mesh);
+	ent->component->addToDataArr(ent->component, cmp, sizeof(Component));
 	ent->isMeshInit = 1;
 }
 
 //добавляй текстуры только после entityInit
 void entityInit(Entity* ent) {
-	if (ent->mesh == NULL) {
-		printf("Entity %s mesh does not init", ent->entityName);
-		return;
-	}
 
 	ent->shader = Shader_new("baseShader");
 	if (ent->vertexShader == NULL) ent->vertexShader = standart_vs;
@@ -82,21 +81,8 @@ void entityInit(Entity* ent) {
 	ent->shader->shaderInit(ent->shader);
 	if (ent->shader->isReady) ent->isShaderInit = 1;
 
-	glGenBuffers(1, &ent->vbo);
-	glGenBuffers(1, &ent->ibo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, ent->vbo);
-	glBufferData(GL_ARRAY_BUFFER,
-		ent->mesh->vertexCount * sizeof(float),
-		ent->mesh->vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ent->ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		ent->mesh->indexCount * sizeof(GLubyte),
-		ent->mesh->indices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	Component* cmp = ((Component*)ent->component->getByIndex(ent->component, 0));
+	cmp->Init(cmp);
 
 	ent->posAttrib = glGetAttribLocation(ent->shader->shaderProgram, "position");
 	ent->normAttrib = glGetAttribLocation(ent->shader->shaderProgram, "normal");
@@ -143,8 +129,8 @@ void draw(Entity* ent) {
 	glRotatef(ent->rotz, 0, 0, 1);
 	glScalef(ent->sizex, ent->sizey, ent->sizez);
 
-	glBindBuffer(GL_ARRAY_BUFFER, ent->vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ent->ibo);
+	Component* cmp = ((Component*)ent->component->getByIndex(ent->component, 0));
+	cmp->Bind(cmp);
 
 	glEnableVertexAttribArray(ent->posAttrib);
 	glVertexAttribPointer(ent->posAttrib, 3, GL_FLOAT, GL_FALSE,
@@ -166,8 +152,7 @@ void draw(Entity* ent) {
 	glDisableVertexAttribArray(ent->texCrdAttrib);
 	glDisableVertexAttribArray(ent->normAttrib);
 	glDisableVertexAttribArray(ent->posAttrib);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	cmp->UnBind(cmp);
 
 	if (ent->tex != NULL)
 		ent->tex->unbindTexture(ent->tex);
@@ -277,6 +262,8 @@ Entity* Entity_new(const char* name) {
 	ent->TrailPosAttrib = 0;
 	ent->trailSize = 0;
 
+	
+	ent->component = dataArr_new();
 
 	ent->isEntInit = 0;
 	ent->isMeshInit = 0;
