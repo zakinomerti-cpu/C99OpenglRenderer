@@ -4,6 +4,8 @@
 #include "platform.h"
 #include "MeshObjects.h"
 #include "Entity.h"
+#include "Component.h"
+#include "dataArray.h"
 
 Scene* scn;
 
@@ -14,7 +16,14 @@ void display() {
 void init() {
 	scn = Scene_new(1024);
 	Entity* ent = Entity_new("cube");
-	ent->setMesh(ent, createCube());
+
+
+	dataArr* CompData = dataArr_new();
+	CompData->addToDataArr(CompData, createCube());
+	Component* cmp = MeshComponent_new(NULL, NULL, CompData);
+	ent->addComponent(ent, cmp);
+
+
 	ent->entityInit(ent);
 	ent->setTexture(ent, "sky.bmp");
 	ent->setPosition(ent, 0, 0, -3);

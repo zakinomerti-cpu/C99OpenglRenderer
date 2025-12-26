@@ -4,26 +4,31 @@
 #include <stdlib.h>
 #include "GL/glew.h"
 
+
+//спецификация компонента таковы, что
+//LocData[0] это vbo, LocData[1] это ibo
 void ComInit(Component* cmp) {
 	dataArr* data = cmp->LocData;
 	GLuint* vbo = (GLuint*)malloc(sizeof(GLuint));
 	GLuint* ibo = (GLuint*)malloc(sizeof(GLuint));
 	if (!vbo || !ibo) return;
-	data->addToDataArr(data, vbo, sizeof(GLuint));
-	data->addToDataArr(data, ibo, sizeof(GLuint));
+	data->addToDataArr(data, vbo);
+	data->addToDataArr(data, ibo);
+
+	dataArr* inDt = cmp->InData;
 
 	glGenBuffers(1,	vbo);
 	glGenBuffers(1, ibo);
 
 	glBindBuffer(GL_ARRAY_BUFFER, (*vbo));
 	glBufferData(GL_ARRAY_BUFFER,
-		((Mesh*)cmp->InData)->vertexCount * sizeof(float),
-		((Mesh*)cmp->InData)->vertices, GL_STATIC_DRAW);
+		((Mesh*)inDt->getByIndex(inDt, 0))->vertexCount * sizeof(float),
+		((Mesh*)inDt->getByIndex(inDt, 0))->vertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*ibo));
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		((Mesh*)cmp->InData)->indexCount * sizeof(GLubyte),
-		((Mesh*)cmp->InData)->indices, GL_STATIC_DRAW);
+		((Mesh*)inDt->getByIndex(inDt, 0))->indexCount * sizeof(GLubyte),
+		((Mesh*)inDt->getByIndex(inDt, 0))->indices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -46,7 +51,7 @@ void removeChild(Component* cmp1, Component* cmp2) { /* тут не реализовано*/ }
 
 // только вне потока opengl, если знаешь
 // что компонент точно пойдет на удаление
-void DeleteComponent(Component* cmp) {
+void DeleteMeshComponent(Component* cmp) {
 	cmp->Init = NULL;
 	cmp->Bind = NULL;
 	cmp->UnBind = NULL;
@@ -66,7 +71,8 @@ void DeleteComponent(Component* cmp) {
 
 //vbo = LocData[0]
 //ibo = LocData[1]
-Component* MeshComponent_new(Component* prnt, Entity* ent, Mesh* mesh) {
+//Mesh* = InData[0]
+Component* MeshComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 	Component* cmp = (Component*)malloc(sizeof(Component));
 	if (!cmp) return NULL;
 
@@ -75,12 +81,12 @@ Component* MeshComponent_new(Component* prnt, Entity* ent, Mesh* mesh) {
 	cmp->UnBind = unBind;
 	cmp->AddChild = addChild;
 	cmp->RemoveChild = removeChild;
-	cmp->DeleteComponent = DeleteComponent;
+	cmp->DeleteComponent = DeleteMeshComponent;
 
 	cmp->parentCmp = prnt;
 	cmp->parentEntity = ent;
 
-	cmp->InData = mesh;
+	cmp->InData = InData;
 	cmp->child = dataArr_new();
 	if (!cmp->child) {
 		free(cmp);

@@ -16,7 +16,6 @@ typedef struct Entity {
 	float sizex, sizey, sizez;
 	size_t trailSize;
 
-	Mesh* mesh;
 	Texture* tex;
 	Shader* shader;
 	Shader* TrailShader;
@@ -24,7 +23,7 @@ typedef struct Entity {
 	int trpSize;
 
 	void (*draw)(struct Entity*);
-	void (*setMesh)(struct Entity*, Mesh*);
+	void (*addComponent)(struct Entity*, Component*);
 	void (*setPosition)(struct Entity*, float, float, float);
 	void (*setRotation)(struct Entity*, float, float, float);
 	void (*setScale)(struct Entity*, float, float, float);
@@ -37,8 +36,6 @@ typedef struct Entity {
 
 	void (*setTexture)(struct Entity*, const char*);
 
-	unsigned int vbo;
-	unsigned int ibo;
 	unsigned int trailsVbo;
 
 	unsigned int posAttrib;
@@ -48,7 +45,6 @@ typedef struct Entity {
 	unsigned int TrailPosAttrib;
 
 
-	unsigned char isMeshInit;
 	unsigned char isShaderInit;
 	unsigned char isEntInit;
 	char* entityName;

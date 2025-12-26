@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include "dataArray.h"
 
-void addToDataArr(dataArr* arr, void* data, size_t dataSize) {
-	(void)dataSize;
+void addToDataArr(dataArr* arr, void* data) {
 	if (!arr) return;
 	if (arr->size >= arr->capacity) {
 		arr->capacity = (arr->capacity == 0) ? 2 : arr->capacity * 2;

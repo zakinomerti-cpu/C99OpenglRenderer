@@ -1,8 +1,16 @@
 #ifndef COMPONENTCLASS_H
 #define COMPONENTCLASS_H
 
-typedef struct Entity Entity;
+typedef enum ComponentVTable {
+	CMP_CUSTOM,
+	CMP_SHADER,
+	CMP_TEXTURE,
+	CMP_MESH,
+	CMP_SCRIPT,
+	CMP_CAMERA,
+} ComponentVTable;
 
+typedef struct Entity Entity;
 typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
@@ -20,14 +28,14 @@ typedef struct Component {
 	struct Component* parentCmp;
 	Entity* parentEntity;
 
-	void* InData;
+	dataArr* InData;
 	dataArr* child;
 	dataArr* LocData;
 } Component;
 
-Component* MeshComponent_new(Component* prnt, Entity* ent, Mesh* mesh);
-Component* ShaderComponent_new(Entity*, Shader*);
-Component* TextureComponent_new(Entity*, Texture*);
-Component* RenderComponent_new(Entity*);
+Component* MeshComponent_new(Component* prnt, Entity* ent, dataArr* InData);
+Component* ShaderComponent_new(Component* prnt, Entity* ent, dataArr* InData);
+Component* TextureComponent_new(Component* prnt, Entity* ent, dataArr* InData);
+Component* RenderComponent_new(Component* prnt, Entity* ent, dataArr* InData);
 
 #endif

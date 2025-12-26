@@ -5,11 +5,11 @@ typedef struct dataArr {
 	void** data;
 	size_t size;
 	size_t capacity;
-	void (*addToDataArr)(struct dataArr*, void* data, size_t dataSize);
+	void (*addToDataArr)(struct dataArr*, void* data);
 	void* (*getByIndex)(struct dataArr*, size_t);
 } dataArr;
 
 dataArr* dataArr_new();
-void addToDataArr(dataArr*, void*, size_t);
+void addToDataArr(dataArr*, void*);
 
 #endif

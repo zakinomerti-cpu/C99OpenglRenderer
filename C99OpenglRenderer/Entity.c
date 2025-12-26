@@ -59,17 +59,6 @@ void setScale(Entity* ent, float x, float y, float z) {
 	ent->sizex = x; ent->sizey = y; ent->sizez = z;
 }
 
-void setMesh(Entity* ent, Mesh* mesh) {
-	if (mesh == NULL) {
-		printf("Mesh of entity %s does not init", ent->entityName);
-		return;
-	}
-
-	Component* cmp = MeshComponent_new(NULL, NULL, mesh);
-	ent->component->addToDataArr(ent->component, cmp, sizeof(Component));
-	ent->isMeshInit = 1;
-}
-
 //добавляй текстуры только после entityInit
 void entityInit(Entity* ent) {
 
@@ -109,14 +98,8 @@ void entityInit(Entity* ent) {
 
 }
 void draw(Entity* ent) {
-	if (!ent->isEntInit || !ent->isMeshInit || !ent->isShaderInit) {
-		printf(
-			"you cant draw entity %s because %s does not init\n",
-			ent->entityName,
-			!ent->isEntInit ? "entity" :
-			!ent->isMeshInit ? "mesh" :
-			"shader"
-		);
+	if (!ent->isEntInit || !ent->isShaderInit) {
+		printf("you cant draw entity %s because does not init\n", ent->entityName);
 		return;
 	}
 
@@ -220,6 +203,10 @@ void setTrail(Entity* ent, size_t pointCount) {
 	ent->trailSize = pointCount;
 }
 
+void addComponent(Entity* ent, Component* cmp) {
+	ent->component->addToDataArr(ent->component, cmp);
+}
+
 Entity* Entity_new(const char* name) {
 	Entity* ent = (Entity*)malloc(sizeof(Entity));
 	if (!ent) return NULL;
@@ -236,11 +223,10 @@ Entity* Entity_new(const char* name) {
 	ent->sizez = 1;
 
 	ent->tex = NULL;
-	ent->mesh = NULL;
 	ent->shader = NULL;
 
 	ent->draw = draw;
-	ent->setMesh = setMesh;
+	ent->addComponent = addComponent;
 	ent->setPosition = setPosition;
 	ent->setRotation = setRotation;
 	ent->setScale = setScale;
@@ -253,9 +239,6 @@ Entity* Entity_new(const char* name) {
 	ent->trp = NULL;
 	ent->trpSize = 0;
 
-
-	ent->vbo = 0;
-	ent->ibo = 0;
 	ent->setTexture = setTexture;
 
 	ent->posAttrib = 0;
@@ -269,7 +252,6 @@ Entity* Entity_new(const char* name) {
 	ent->component = dataArr_new();
 
 	ent->isEntInit = 0;
-	ent->isMeshInit = 0;
 	ent->isShaderInit = 0;
 
 	size_t iter = 0;
@@ -284,7 +266,6 @@ Entity* Entity_new(const char* name) {
 
 void Entity_delete(Entity* ent) {
 	ent->draw = NULL;
-	ent->setMesh = NULL;
 	ent->setPosition = NULL;
 	ent->setRotation = NULL;
 	ent->setScale = NULL;
@@ -295,13 +276,8 @@ void Entity_delete(Entity* ent) {
 
 	if(ent->shader)
 		Shader_delete(ent->shader);
-	if(ent->mesh)
-		Mesh_delete(ent->mesh);
 	free(ent->entityName);
 	ent->entityName = NULL;
-
-	if (ent->vbo) glDeleteBuffers(1, &ent->vbo);
-	if (ent->ibo) glDeleteBuffers(1, &ent->ibo);
 
 	free(ent);
 	ent = NULL;

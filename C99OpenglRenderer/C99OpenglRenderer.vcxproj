@@ -142,6 +142,7 @@
     <ClCompile Include="platform.h" />
     <ClCompile Include="Scene.c" />
     <ClCompile Include="Shader.c" />
+    <ClCompile Include="ShaderComponent.c" />
     <ClCompile Include="Texture.c" />
   </ItemGroup>
   <ItemGroup>
