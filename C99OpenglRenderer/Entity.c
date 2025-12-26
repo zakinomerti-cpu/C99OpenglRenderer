@@ -11,44 +11,10 @@
 #include "Shader.h"
 
 void setTexture(Entity* ent, const char* path) {
-	ent->tex = Texture_new(path, ent->shader->shaderProgram);
+	Component* cmp2 = ((Component*)ent->component->getByIndex(ent->component, 1));
+	Shader* shd = cmp2->LocData->getByIndex(cmp2->LocData, 2);
+	ent->tex = Texture_new(path, shd->shaderProgram);
 }
-
-const char* standart_vs =
-"#version 120\n"
-"attribute vec3 position;"
-"attribute vec3 normal;"
-"attribute vec2 texcoord;"
-"varying vec2 vTexCoord;"
-"varying vec3 vNormal;"
-"void main() {"
-"	gl_Position = gl_ModelViewProjectionMatrix * vec4(position, 1.0);"
-"	vNormal = normal;"
-"	vTexCoord = texcoord;"
-"}";
-
-const char* standart_fs =
-"#version 120\n"
-"varying vec3 vNormal;"
-"varying vec2 vTexCoord;"
-"uniform sampler2D u_tex;\n"
-"void main() {\n"
-"    gl_FragColor = texture2D(u_tex, vTexCoord);\n"
-"}";
-
-const char* trail_vs =
-"#version 120\n"
-"attribute vec2 position;"
-"void main() {"
-"	gl_Position = gl_ModelViewProjectionMatrix * vec4(position.x, position.y, -3.0, 1.0);"
-"}";
-
-const char* trail_fs =
-"#version 120\n"
-"void main() {"
-"	gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);"
-"}";
-
 void setPosition(Entity* ent, float x, float y, float z) {
 	ent->posx = x; ent->posy = y; ent->posz = z;
 }
@@ -62,48 +28,32 @@ void setScale(Entity* ent, float x, float y, float z) {
 //добавляй текстуры только после entityInit
 void entityInit(Entity* ent) {
 
-	ent->shader = Shader_new("baseShader");
-	if (ent->vertexShader == NULL) ent->vertexShader = standart_vs;
-	if (ent->fragmentShader == NULL) ent->fragmentShader = standart_fs;
-	ent->shader->setVertexShader(ent->shader, ent->vertexShader);
-	ent->shader->setFragmentShader(ent->shader, ent->fragmentShader);
-	ent->shader->shaderInit(ent->shader);
-	if (ent->shader->isReady) ent->isShaderInit = 1;
+	dataArr* a = ent->component;
 
 	Component* cmp = ((Component*)ent->component->getByIndex(ent->component, 0));
 	cmp->Init(cmp);
 
-	ent->posAttrib = glGetAttribLocation(ent->shader->shaderProgram, "position");
-	ent->normAttrib = glGetAttribLocation(ent->shader->shaderProgram, "normal");
-	ent->textureAttrib = glGetUniformLocation(ent->shader->shaderProgram, "texSampler");
-	ent->texCrdAttrib = glGetAttribLocation(ent->shader->shaderProgram, "texcoord");
+	Component* cmp2 = ((Component*)ent->component->getByIndex(ent->component, 1));
+	cmp2->Init(cmp2);
+
+	Shader* shd = cmp2->LocData->getByIndex(cmp2->LocData, 2);
+
+	ent->posAttrib = glGetAttribLocation(shd, "position");
+	ent->normAttrib = glGetAttribLocation(shd, "normal");
+	ent->textureAttrib = glGetUniformLocation(shd, "texSampler");
+	ent->texCrdAttrib = glGetAttribLocation(shd, "texcoord");
 	ent->isEntInit = 1;
-
-	if (ent->trailSize > 0) {
-
-		ent->TrailShader = Shader_new("trailShader");
-		ent->TrailShader->setVertexShader(ent->TrailShader, trail_vs);
-		ent->TrailShader->setFragmentShader(ent->TrailShader, trail_fs);
-		ent->TrailShader->shaderInit(ent->TrailShader);
-		ent->TrailPosAttrib = glGetAttribLocation(ent->TrailShader->shaderProgram, "position");
-
-		glGenBuffers(1, &ent->trailsVbo);
-		glBindBuffer(GL_ARRAY_BUFFER, ent->trailsVbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(TrailPoint) * 5000, NULL, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		TrailPoint* tmp = (TrailPoint*)realloc(ent->trp, sizeof(TrailPoint) * ent->trailSize);
-		if (!tmp) return;
-		ent->trp = tmp;
-	}
 
 }
 void draw(Entity* ent) {
-	if (!ent->isEntInit || !ent->isShaderInit) {
+	if (!ent->isEntInit) {
 		printf("you cant draw entity %s because does not init\n", ent->entityName);
 		return;
 	}
 
-	glUseProgram(ent->shader->shaderProgram);
+	Component* cmpShader = ((Component*)ent->component->getByIndex(ent->component, 1));
+	cmpShader->Bind(cmpShader);
+
 	glPushMatrix();
 
 	glTranslatef(ent->posx, ent->posy, ent->posz);
@@ -112,11 +62,8 @@ void draw(Entity* ent) {
 	glRotatef(ent->rotz, 0, 0, 1);
 	glScalef(ent->sizex, ent->sizey, ent->sizez);
 
-	Component* cmp = ((Component*)ent->component->getByIndex(ent->component, 0));
-	GLuint* vbo = cmp->LocData->getByIndex(cmp->LocData, 0);
-	Mesh* mesh = (Mesh*)cmp->InData;
-	GLuint a = (*vbo);
-	cmp->Bind(cmp);
+	Component* cmpMesh = ((Component*)ent->component->getByIndex(ent->component, 0));
+	cmpMesh->Bind(cmpMesh);
 
 	glEnableVertexAttribArray(ent->posAttrib);
 	glVertexAttribPointer(ent->posAttrib, 3, GL_FLOAT, GL_FALSE,
@@ -133,53 +80,19 @@ void draw(Entity* ent) {
 
 	if (ent->tex != NULL)
 		ent->tex->bindTexture(ent->tex);
-	glDrawElements(GL_TRIANGLES, ((Mesh*)cmp->InData)->indexCount, GL_UNSIGNED_BYTE, 0);
+
+	Mesh* msh = (Mesh*)cmpMesh->InData->getByIndex(cmpMesh->InData, 0);
+	glDrawElements(GL_TRIANGLES, msh->indexCount, GL_UNSIGNED_BYTE, 0);
 
 	glDisableVertexAttribArray(ent->texCrdAttrib);
 	glDisableVertexAttribArray(ent->normAttrib);
 	glDisableVertexAttribArray(ent->posAttrib);
-	cmp->UnBind(cmp);
 
 	if (ent->tex != NULL)
 		ent->tex->unbindTexture(ent->tex);
 
+	cmpMesh->UnBind(cmpMesh);
 	glPopMatrix();
-	glUseProgram(0);
-
-
-	//trailblock
-	if (ent->trailSize > 0) {
-
-		if (ent->trpSize < ent->trailSize) {
-			ent->trp[ent->trpSize].x = ent->posx*1.03;
-			ent->trp[ent->trpSize].y = ent->posy*1.03;
-			ent->trpSize++;
-
-		}
-		else {
-			for (int i = 0; i < ent->trpSize - 1; i++) {
-				ent->trp[i] = ent->trp[i + 1];
-			}
-			ent->trp[ent->trpSize - 1].x = ent->posx * 1.03;
-			ent->trp[ent->trpSize - 1].y = ent->posy * 1.03;
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, ent->trailsVbo); 
-		glBufferSubData(GL_ARRAY_BUFFER, 0, ent->trpSize * sizeof(TrailPoint), ent->trp); 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glUseProgram(ent->TrailShader->shaderProgram);
-
-		glBindBuffer(GL_ARRAY_BUFFER, ent->trailsVbo);
-		glEnableVertexAttribArray(ent->TrailPosAttrib);
-		glVertexAttribPointer(ent->TrailPosAttrib, 2, GL_FLOAT, GL_FALSE, sizeof(TrailPoint), 0);
-
-		glDrawArrays(GL_LINE_STRIP, 0, ent->trpSize);
-
-		glDisableVertexAttribArray(ent->TrailPosAttrib);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glUseProgram(0);
-	}
 
 }
 
@@ -197,10 +110,6 @@ void setFragmentShader(Entity* ent, const char* src) {
 
 	memcpy(tmp, src, (strlen(src) + 1));
 	ent->fragmentShader = tmp;
-}
-
-void setTrail(Entity* ent, size_t pointCount) {
-	ent->trailSize = pointCount;
 }
 
 void addComponent(Entity* ent, Component* cmp) {
@@ -233,11 +142,8 @@ Entity* Entity_new(const char* name) {
 	ent->entityInit = entityInit;
 	ent->setVertexShader = setVertexShader;
 	ent->setFragmentShader = setFragmentShader;
-	ent->setTrail = setTrail;
 	ent->fragmentShader = NULL;
 	ent->vertexShader = NULL;
-	ent->trp = NULL;
-	ent->trpSize = 0;
 
 	ent->setTexture = setTexture;
 
@@ -245,8 +151,6 @@ Entity* Entity_new(const char* name) {
 	ent->normAttrib = 0;
 	ent->texCrdAttrib = 0;
 	ent->textureAttrib = 0;
-	ent->TrailPosAttrib = 0;
-	ent->trailSize = 0;
 
 	
 	ent->component = dataArr_new();
@@ -271,8 +175,6 @@ void Entity_delete(Entity* ent) {
 	ent->setScale = NULL;
 	ent->entityInit = NULL;
 	ent->getEntityName = NULL;
-	ent->setTrail = NULL;
-	ent->TrailShader = NULL;
 
 	if(ent->shader)
 		Shader_delete(ent->shader);

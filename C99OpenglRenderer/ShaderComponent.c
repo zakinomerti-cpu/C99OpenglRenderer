@@ -16,8 +16,13 @@ void ShaderCmpInit(Component* cmp) {
 }
 void ShaderCmpBind(Component* cmp) {
 
+	Shader* shader = (Shader*)cmp->LocData->getByIndex(cmp->LocData, 2);
+	glUseProgram(shader->shaderProgram);
 }
-void ShaderCmpUnBind(Component* cmp) {}
+void ShaderCmpUnBind(Component* cmp) {
+	glUseProgram(0);
+}
+
 void ShaderCmpAddChild(Component* cmp, Component* chd) {}
 void ShaderCmpRemoveChild(Component* cmp, Component* chd) {}
 void ShaderCmpDeleteComponent(Component* cmp) {}
@@ -26,13 +31,8 @@ void ShaderCmpDeleteComponent(Component* cmp) {}
 // LocData[0] = vs
 // LocData[1] = fs
 // LocData[2] = Shader
-// LocData[3] = attribArray: в LocData[3] лежит dataArr массив аттрибутов шейдера
-// LocData[4] = uniformArray: в LocData[3] лежит dataArr массив uniform'ов шейдера
 
-// компонент ожидает, что InData[0], InData[1] это vs, fs, InData[2]
-// это массив аттрибутов( структур содержащих имя, размерность и данные )
-// по ним создается glVertexAttribPointer с нужными параметрами
-// InData[3] это массив uniform'ов
+// компонент ожидает, что InData[0], InData[1] это vs, fs
 Component* ShaderComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 	Component* cmp = (Component*)malloc(sizeof(Component));
 	if (!cmp) return NULL;
@@ -49,8 +49,8 @@ Component* ShaderComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 
 	cmp->InData = InData;
 	cmp->child = dataArr_new();
-	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 0));
-	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 0));
 	cmp->LocData = dataArr_new();
+	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 0));
+	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 1));
 	return cmp;
 }
