@@ -1,8 +1,10 @@
 #ifndef MESHCLASS_H
 #define MESHCLASS_H
 
+
 //mesh datatype
 typedef struct Mesh {
+	char* name;
 	void (*init)(struct Mesh*);
 	void (*setVertices)(struct Mesh*, float*, int);
 	void (*setIndices)(struct Mesh*, unsigned char*, int);

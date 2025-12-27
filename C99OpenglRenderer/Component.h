@@ -1,6 +1,30 @@
+//-----------------------------------------------------------------------------
+// COMPONENT C-STYLE CLASS
+// Что есть компонентный обьект? Это обьект, хранящий в себе динамический
+// массив элементов. Каждый элемент этого массива тоже является массивом
+// В котором хранятся более низкоуровневые обьекты. Для чего это нужно?
+// В основе сие класса лежит хеш функция, которая вычисляет позицию обь-
+// екта во внешнем массиве, а внутренний массив нужен чтобы обработать
+// коллизию хеш функции. Чтобы найти обьект в компоненте, снача по имени 
+// обьекта вычисляется его индекс в массиве, а затем мы проходим по каждому
+// обьекту вложенного массива и ищем тот самый обьект, что искали по имени.
+// Это очень удобно для отладки и чуть ускоряет работу движка при большом
+// количестве обьектов. Ну... Я так думаю... :).
+// 
+// Каждая конкретная реализация Component сама определяет входные параметры,
+// Подробнее о входных параметрах можно почитать в самих файлах реализаций.
+//-----------------------------------------------------------------------------
 #ifndef COMPONENTCLASS_H
 #define COMPONENTCLASS_H
 
+typedef struct HashArray {
+	
+} Has;
+
+
+//-------------------------------------------------------------------------
+// Структурные дефениции
+//-------------------------------------------------------------------------
 typedef struct SYSTEM SYSTEM;
 typedef struct Component Component;
 typedef struct dataArr dataArr;
@@ -8,7 +32,6 @@ typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Entity Entity;
 typedef struct Mesh Mesh;
-
 typedef enum ComponentTagTable {
 	CMP_CUSTOM = 1011,
 	CMP_SHDOBJ = 1012,
@@ -21,32 +44,95 @@ typedef enum ComponentTagTable {
 	CMP_LGCOBJ = 1019,
 } ComponentTagTable;
 
+
+//-----------------------------------------------------------------------------
 // один компонент, один тип 
 // ресурса! не пихай все в один
+// компонент, это фабрика ресурса+массив;
+//-----------------------------------------------------------------------------
 typedef struct Component {
 	char* m_pName;
 	ComponentTagTable TagValue;
 	void (*Init)(struct Component*);
 	void (*Bind)(struct Component*);
 	void (*UnBind)(struct Component*);
-	void (*SystemCreateEvent)(struct Component*, SYSTEM*);
-	void (*SystemUpdateEvent)(struct Component*, SYSTEM*);
-	void (*AddObject)(struct Component*, dataArr* InData);
+
+
+	//-------------------------------------------------------------------------
+	// Система событий. Каждый компонент 
+	// может посвоему обработать спавн и 
+	// апдейт. Не обязательны к реализации.
+	//-------------------------------------------------------------------------
+	void (*OnComponentCreate)(struct Component*, SYSTEM*);
+	void (*OnComponentUpdate)(struct Component*, SYSTEM*);
+
+
+	//-------------------------------------------------------------------------
+	// Реализовано не для всех entity
+	// Функционал управления обьектами
+	// Необязателен к реализации, но в
+	// таком случае данные функции
+	// должны явно указывать на NULL
+	//-------------------------------------------------------------------------
 	void (*AddChild)(struct Component*, struct Component*);
 	void (*RemoveChild)(struct Component*, int index);
 
+
+	//-------------------------------------------------------------------------
+	// Выбрать обьект из общего списка
+	// Выбранный обьект станет целевым
+	// для функции bind.
+	//-------------------------------------------------------------------------
 	void (*SelectObject)(struct Component*, char* objName);
+
+
+	//-------------------------------------------------------------------------
+	// Получить общее количество обьеков
+	//-------------------------------------------------------------------------
 	void (*GetChdCount)(struct Component*);
+
+
+	//-------------------------------------------------------------------------
+	// Ключевая фича: добавление обьектов в массив. 
+	//-------------------------------------------------------------------------
+	void (*AddObject)(struct Component*, dataArr* InData, const char* name);
+	void (*GetObject)(struct Component*, const char* name);
+
+
+	//-------------------------------------------------------------------------
+	// Доп фича: возможность вывести документацию по функции.
+	// Хз зачем, но  мне кажется прикольно.
+	//-------------------------------------------------------------------------
+	void (*PrintDoc)(struct Component*);
+
+
+	//-------------------------------------------------------------------------
+	// m_Object - массив готовых к использованию обьектов
+	// m_Object инициализируется как массив из m_iSize 
+	// элементов, каждый из которых - NULL до вставки.
+	//-------------------------------------------------------------------------
 	dataArr* m_Object;
 
-	// private Block
+
+	//-------------------------------------------------------------------------
+	// m_iSize - размер m_Object массива
+	// m_iObjCount - количество инициализированных обьектов
+	// в массиве m_Object.
+	//-------------------------------------------------------------------------
+	int m_iSize;
+	int m_iObjCount;
+
+
+	//-------------------------------------------------------------------------
+	// m_pParentEntity - указатель на родительский энтити.
+	// m_LocData - внутренний универсальный массив компонента.
+	// m_child - массив дочерних компонентов.
+	//-------------------------------------------------------------------------
 	Entity* m_pParentEntity;
-	dataArr* m_InData;
 	dataArr* m_LocData;
 	dataArr* m_child;
 
 	int m_iIsReady;
-
 	//если m_bChdCount = -1 то
 	//компонент не может иметь детей
 	//...
@@ -59,10 +145,10 @@ typedef struct Component {
 //имя копируется внутрь обьекта
 //InData при добавлении: arr[0] - vertices(float*), arr[1] - vertexCount(int) 
 //arr[2] - indices(unsigned char*), arr[3] - indexCount(int)
-Component* MeshComponent_new(Component* prnt, Entity* ent, char* CmpName);
+Component* MeshComponent_new(Component* prnt, Entity* ent, char* CmpName, int size);
 void DeleteMeshComponent(Component* cmp);
 
-Component* ShaderComponent_new(Component* prnt, Entity* ent, char* CmpName);
+Component* ShaderComponent_new(Component* prnt, Entity* ent, char* CmpName, int size);
 void DeleteShaderComponent(Component* cmp);
 
 Component* TextureComponent_new(Component* prnt, Entity* ent, char* CmpName);

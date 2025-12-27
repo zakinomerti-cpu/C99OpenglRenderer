@@ -22,6 +22,9 @@
     <Filter Include="Исходные файлы\Components\header">
       <UniqueIdentifier>{1b69d0a7-96c1-4c5e-9a67-728c1f56f668}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\tools">
+      <UniqueIdentifier>{fee197bd-e27c-4dfb-8915-9bbbbbd7ec6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Исходные файлы\Components\header</Filter>
+    </ClInclude>
+    <ClInclude Include="HashArray.h">
+      <Filter>Исходные файлы\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

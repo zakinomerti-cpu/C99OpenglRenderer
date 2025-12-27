@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClInclude Include="Component.h" />
     <ClInclude Include="dataArray.h" />
+    <ClInclude Include="HashArray.h" />
     <ClInclude Include="MeshObjects.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Mesh.h" />

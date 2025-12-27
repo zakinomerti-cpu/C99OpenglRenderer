@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include <stdlib.h>
 #include "GL/glew.h"
+#include "ownerTable.h"
 
 void InitMeshObject(Mesh* mesh) {
 	glGenBuffers(1, &mesh->vbo);
