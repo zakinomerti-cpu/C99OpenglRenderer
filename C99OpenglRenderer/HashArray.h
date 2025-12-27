@@ -5,12 +5,12 @@ typedef struct dataArr dataArr;
 
 typedef struct HashArrayElement {
 	char* name;
-	void* element;
+	void* data;
 } HashArrayElement;
 
 typedef struct HashArray {
 	void (*addObject)(struct HashArray*, void*, const char*);
-	void* (*getEntity)(struct HashArray*, const char*);
+	void* (*getObject)(struct HashArray*, const char*);
 
 	dataArr* (*getInnerArray)(struct HashArray*, int);
 	int elementCount;
