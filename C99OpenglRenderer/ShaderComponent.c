@@ -40,15 +40,10 @@ Component* ShaderComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 	cmp->Init = ShaderCmpInit;
 	cmp->Bind = ShaderCmpBind;
 	cmp->UnBind = ShaderCmpUnBind;
-	cmp->AddChild = ShaderCmpAddChild;
-	cmp->RemoveChild = ShaderCmpRemoveChild;
 	cmp->DeleteComponent = ShaderCmpDeleteComponent;
-
-	cmp->parentCmp = prnt;
 	cmp->parentEntity = ent;
 
 	cmp->InData = InData;
-	cmp->child = dataArr_new();
 	cmp->LocData = dataArr_new();
 	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 0));
 	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 1));

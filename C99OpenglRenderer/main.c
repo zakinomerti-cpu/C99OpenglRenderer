@@ -6,6 +6,7 @@
 #include "Entity.h"
 #include "Component.h"
 #include "dataArray.h"
+#include "Shader.h"
 
 const char* standart_vs =
 "#version 120\n"
@@ -26,7 +27,7 @@ const char* standart_fs =
 "varying vec2 vTexCoord;"
 "uniform sampler2D u_tex;\n"
 "void main() {\n"
-"    gl_FragColor = vec4(0.1,0.2,0.3, 1.0);\n"
+"    gl_FragColor = texture2D(u_tex, vTexCoord);\n"
 "}";
 
 Scene* scn;
@@ -43,17 +44,28 @@ void init() {
 	dataArr* MeshCompData = dataArr_new();
 	MeshCompData->addToDataArr(MeshCompData, createCube());
 	Component* Meshcmp = MeshComponent_new(NULL, NULL, MeshCompData);
+	Meshcmp->Init(Meshcmp);
 	ent->addComponent(ent, Meshcmp);
 
 	dataArr* ShaderCompData = dataArr_new();
 	ShaderCompData->addToDataArr(ShaderCompData, standart_vs);
 	ShaderCompData->addToDataArr(ShaderCompData, standart_fs);
 	Component* Shadercmp = ShaderComponent_new(NULL, NULL, ShaderCompData);
+	Shadercmp->Init(Shadercmp);
 	ent->addComponent(ent, Shadercmp);
 
+	dataArr* TextureCompData = dataArr_new();
+	TextureCompData->addToDataArr(TextureCompData, "sky.bmp");
+	Component* shader = ((Component*)ent->component->getByIndex(ent->component, 1));
+	Shader* shd = (Shader*)shader->LocData->getByIndex(shader->LocData, 2);
+	GLuint shaderProgram = shd->shaderProgram;
+	TextureCompData->addToDataArr(TextureCompData, &shaderProgram);
+	Component* Texturecmp = TextureComponent_new(NULL, NULL, TextureCompData);
+	Texturecmp->Init(Texturecmp);
+	ent->addComponent(ent, Texturecmp);
 
 	ent->entityInit(ent);
-	ent->setTexture(ent, "sky.bmp");
+
 	ent->setPosition(ent, 0, 0, -3);
 	ent->setRotation(ent, 45, 45, 0);
 	scn->addEntity(scn, ent);

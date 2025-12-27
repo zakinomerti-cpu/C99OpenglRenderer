@@ -10,11 +10,6 @@
 #include "Mesh.h"
 #include "Shader.h"
 
-void setTexture(Entity* ent, const char* path) {
-	Component* cmp2 = ((Component*)ent->component->getByIndex(ent->component, 1));
-	Shader* shd = cmp2->LocData->getByIndex(cmp2->LocData, 2);
-	ent->tex = Texture_new(path, shd->shaderProgram);
-}
 void setPosition(Entity* ent, float x, float y, float z) {
 	ent->posx = x; ent->posy = y; ent->posz = z;
 }
@@ -28,20 +23,13 @@ void setScale(Entity* ent, float x, float y, float z) {
 //добавляй текстуры только после entityInit
 void entityInit(Entity* ent) {
 
-	dataArr* a = ent->component;
-
-	Component* cmp = ((Component*)ent->component->getByIndex(ent->component, 0));
-	cmp->Init(cmp);
-
 	Component* cmp2 = ((Component*)ent->component->getByIndex(ent->component, 1));
-	cmp2->Init(cmp2);
-
 	Shader* shd = cmp2->LocData->getByIndex(cmp2->LocData, 2);
 
-	ent->posAttrib = glGetAttribLocation(shd, "position");
-	ent->normAttrib = glGetAttribLocation(shd, "normal");
-	ent->textureAttrib = glGetUniformLocation(shd, "texSampler");
-	ent->texCrdAttrib = glGetAttribLocation(shd, "texcoord");
+	ent->posAttrib = glGetAttribLocation(shd->shaderProgram, "position");
+	ent->normAttrib = glGetAttribLocation(shd->shaderProgram, "normal");
+	ent->textureAttrib = glGetUniformLocation(shd->shaderProgram, "texSampler");
+	ent->texCrdAttrib = glGetAttribLocation(shd->shaderProgram, "texcoord");
 	ent->isEntInit = 1;
 
 }
@@ -78,8 +66,8 @@ void draw(Entity* ent) {
 		8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 
-	if (ent->tex != NULL)
-		ent->tex->bindTexture(ent->tex);
+	Component* cmpTex = ((Component*)ent->component->getByIndex(ent->component, 2));
+	cmpTex->Bind(cmpTex);
 
 	Mesh* msh = (Mesh*)cmpMesh->InData->getByIndex(cmpMesh->InData, 0);
 	glDrawElements(GL_TRIANGLES, msh->indexCount, GL_UNSIGNED_BYTE, 0);
@@ -88,28 +76,11 @@ void draw(Entity* ent) {
 	glDisableVertexAttribArray(ent->normAttrib);
 	glDisableVertexAttribArray(ent->posAttrib);
 
-	if (ent->tex != NULL)
-		ent->tex->unbindTexture(ent->tex);
+	cmpTex->Bind(cmpTex);
 
 	cmpMesh->UnBind(cmpMesh);
 	glPopMatrix();
 
-}
-
-void setVertexShader(Entity* ent, const char* src) {
-	char* tmp = (char*)malloc(sizeof(char) * (strlen(src) + 1));
-	if (!tmp) return;
-
-	memcpy(tmp, src, (strlen(src) + 1));
-	ent->vertexShader = tmp;
-}
-
-void setFragmentShader(Entity* ent, const char* src) {
-	char* tmp = (char*)malloc(sizeof(char) * (strlen(src) + 1));
-	if (!tmp) return;
-
-	memcpy(tmp, src, (strlen(src) + 1));
-	ent->fragmentShader = tmp;
 }
 
 void addComponent(Entity* ent, Component* cmp) {
@@ -131,21 +102,12 @@ Entity* Entity_new(const char* name) {
 	ent->sizey = 1;
 	ent->sizez = 1;
 
-	ent->tex = NULL;
-	ent->shader = NULL;
-
 	ent->draw = draw;
 	ent->addComponent = addComponent;
 	ent->setPosition = setPosition;
 	ent->setRotation = setRotation;
 	ent->setScale = setScale;
 	ent->entityInit = entityInit;
-	ent->setVertexShader = setVertexShader;
-	ent->setFragmentShader = setFragmentShader;
-	ent->fragmentShader = NULL;
-	ent->vertexShader = NULL;
-
-	ent->setTexture = setTexture;
 
 	ent->posAttrib = 0;
 	ent->normAttrib = 0;
@@ -156,7 +118,6 @@ Entity* Entity_new(const char* name) {
 	ent->component = dataArr_new();
 
 	ent->isEntInit = 0;
-	ent->isShaderInit = 0;
 
 	size_t iter = 0;
 	ent->entityName = (char*)malloc(sizeof(char) * (strlen(name)+1));
@@ -176,8 +137,6 @@ void Entity_delete(Entity* ent) {
 	ent->entityInit = NULL;
 	ent->getEntityName = NULL;
 
-	if(ent->shader)
-		Shader_delete(ent->shader);
 	free(ent->entityName);
 	ent->entityName = NULL;
 

@@ -12,9 +12,6 @@ typedef struct Entity {
 	float rotx, roty, rotz;
 	float sizex, sizey, sizez;
 
-	Texture* tex;
-	Shader* shader;
-
 	void (*draw)(struct Entity*);
 	void (*addComponent)(struct Entity*, Component*);
 	void (*setPosition)(struct Entity*, float, float, float);
@@ -23,23 +20,13 @@ typedef struct Entity {
 	void (*entityInit)(struct Entity*);
 	char* (*getEntityName)(struct Entity*);
 
-	void (*setVertexShader)(struct Entity*, const char*);
-	void (*setFragmentShader)(struct Entity*, const char*);
-
-	void (*setTexture)(struct Entity*, const char*);
-
 	unsigned int posAttrib;
 	unsigned int normAttrib;
 	unsigned int textureAttrib;
 	unsigned int texCrdAttrib;
 
-
-	unsigned char isShaderInit;
 	unsigned char isEntInit;
 	char* entityName;
-
-	char* vertexShader;
-	char* fragmentShader;
 
 	dataArr* component;
 

@@ -48,6 +48,9 @@
     <ClCompile Include="ShaderComponent.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="TextureComponent.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

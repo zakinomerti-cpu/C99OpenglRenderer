@@ -1,5 +1,5 @@
 
-#define STB_IMAGE_IMPLEMENTATION
+/*#define STB_IMAGE_IMPLEMENTATION
 #include "Texture.h"
 #include "stdio.h"
 #include "GL/glew.h"
@@ -54,3 +54,4 @@ Texture* Texture_new(const char* path, unsigned int shd_prg) {
 	return out;
 
 }
+*/

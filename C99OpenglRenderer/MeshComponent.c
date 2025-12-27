@@ -55,16 +55,12 @@ void DeleteMeshComponent(Component* cmp) {
 	cmp->Init = NULL;
 	cmp->Bind = NULL;
 	cmp->UnBind = NULL;
-	cmp->AddChild = NULL;
-	cmp->RemoveChild = NULL;
 	cmp->DeleteComponent = NULL;
 
 	glDeleteBuffers(1, cmp->LocData->getByIndex(cmp->LocData, 0));
 	glDeleteBuffers(1, cmp->LocData->getByIndex(cmp->LocData, 1));
 	free(cmp->LocData->getByIndex(cmp->LocData, 0));
 	free(cmp->LocData->getByIndex(cmp->LocData, 1));
-
-	dataArr_delete(cmp->child);
 	dataArr_delete(cmp->LocData);
 	free(cmp);
 }
@@ -79,19 +75,10 @@ Component* MeshComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 	cmp->Init = ComInit;
 	cmp->Bind = bind;
 	cmp->UnBind = unBind;
-	cmp->AddChild = addChild;
-	cmp->RemoveChild = removeChild;
 	cmp->DeleteComponent = DeleteMeshComponent;
-
-	cmp->parentCmp = prnt;
 	cmp->parentEntity = ent;
 
 	cmp->InData = InData;
-	cmp->child = dataArr_new();
-	if (!cmp->child) {
-		free(cmp);
-		return NULL;
-	}
 	cmp->LocData = dataArr_new();
 	if (!cmp->LocData) {
 		free(cmp);
