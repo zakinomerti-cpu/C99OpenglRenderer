@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HashArray.c" />
     <ClCompile Include="Mesh.c" />
     <ClCompile Include="MeshComponent.c" />
     <ClCompile Include="dataArray.c" />
@@ -151,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Component.h" />
     <ClInclude Include="dataArray.h" />
+    <ClInclude Include="HashArray.h" />
     <ClInclude Include="MeshObjects.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Mesh.h" />
