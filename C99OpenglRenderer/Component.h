@@ -1,24 +1,28 @@
 #ifndef COMPONENTCLASS_H
 #define COMPONENTCLASS_H
 
-typedef enum ComponentVTable {
-	CMP_CUSTOM,
-	CMP_SHADER,
-	CMP_TEXTURE,
-	CMP_RENDER,
-	CMP_MESH,
-	CMP_SCRIPT,
-	CMP_CAMERA,
-} ComponentVTable;
+typedef struct Component Component;
 
 typedef struct Entity Entity;
+typedef struct dataArr dataArr;
 typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
 
-typedef struct dataArr dataArr;
+typedef enum ComponentTagTable {
+	CMP_CUSTOM = 1010,
+	CMP_SHADER = 1011,
+	CMP_TEXENT = 1012,
+	CMP_RENDER = 1013,
+	CMP_MSHENT = 1014,
+	CMP_SCRIPT = 1015,
+	CMP_CAMERA = 1016,
+	CMP_GUIENT = 1017,
+	CMP_LGCENT = 1018,
+} ComponentTagTable;
 
 typedef struct Component {
+	ComponentTagTable TagValue;
 	void (*Init)(struct Component*);
 	void (*Bind)(struct Component*);
 	void (*UnBind)(struct Component*);
@@ -29,12 +33,12 @@ typedef struct Component {
 
 	dataArr* InData;
 	dataArr* LocData;
+	dataArr* Object;
 	dataArr* child;
 
 	int isReady;
-	// если chdCount = -1 значит обьект
-	// не может иметь детей
 	int chdCount;
+	int SelectedObjet;
 
 } Component;
 
