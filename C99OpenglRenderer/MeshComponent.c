@@ -2,51 +2,27 @@
 #include "dataArray.h"
 #include "Mesh.h"
 #include <stdlib.h>
-#include "GL/glew.h"
 
-
-//спецификация компонента таковы, что
-//LocData[0] это vbo, LocData[1] это ibo
 void ComInit(Component* cmp) {
-	dataArr* data = cmp->LocData;
-	GLuint* vbo = (GLuint*)malloc(sizeof(GLuint));
-	GLuint* ibo = (GLuint*)malloc(sizeof(GLuint));
-	if (!vbo || !ibo) return;
-	data->addToDataArr(data, vbo);
-	data->addToDataArr(data, ibo);
 
-	dataArr* inDt = cmp->InData;
+	dataArr* data = cmp->InData;
 
-	glGenBuffers(1,	vbo);
-	glGenBuffers(1, ibo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, (*vbo));
-	glBufferData(GL_ARRAY_BUFFER,
-		((Mesh*)inDt->getByIndex(inDt, 0))->vertexCount * sizeof(float),
-		((Mesh*)inDt->getByIndex(inDt, 0))->vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*ibo));
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		((Mesh*)inDt->getByIndex(inDt, 0))->indexCount * sizeof(GLubyte),
-		((Mesh*)inDt->getByIndex(inDt, 0))->indices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+	Mesh* mesh = Mesh_new();
+	mesh->setVertices(mesh, data->getByIndex(data, 0), data->getByIndex(data, 1));
+	mesh->setIndices(mesh, data->getByIndex(data, 2), data->getByIndex(data, 3));
+	mesh->init(mesh);
+	cmp->LocData->addToDataArr(cmp->LocData, mesh);
 	cmp->isReady = 1;
 }
 
 void bind(Component* cmp) {
-	dataArr* data = cmp->LocData;
-	GLuint* vbo = data->getByIndex(data, 0);
-	GLuint* ibo = data->getByIndex(data, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, (*vbo));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*ibo));
+	Mesh* mesh = (Mesh*)cmp->LocData->getByIndex(cmp->LocData, 0);
+	mesh->bind(mesh);
 }
 
 void unBind(Component* cmp) {
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	Mesh* mesh = (Mesh*)cmp->LocData->getByIndex(cmp->LocData, 0);
+	mesh->unBind(mesh);
 }
 void addChild(Component* cmp1, Component* cmp2) { /* тут не реализовано*/ }
 void removeChild(Component* cmp1, Component* cmp2) { /* тут не реализовано*/ }
@@ -58,18 +34,15 @@ void DeleteMeshComponent(Component* cmp) {
 	cmp->Bind = NULL;
 	cmp->UnBind = NULL;
 	cmp->DeleteComponent = NULL;
-
-	glDeleteBuffers(1, cmp->LocData->getByIndex(cmp->LocData, 0));
-	glDeleteBuffers(1, cmp->LocData->getByIndex(cmp->LocData, 1));
-	free(cmp->LocData->getByIndex(cmp->LocData, 0));
-	free(cmp->LocData->getByIndex(cmp->LocData, 1));
-	dataArr_delete(cmp->LocData);
 	free(cmp);
 }
 
-//vbo = LocData[0]
-//ibo = LocData[1]
-//Mesh* = InData[0]
+// LocData[0] - Low Level Mesh Object
+//vertices = InData[0]
+//vertexCount = InData[1]
+//indices = InData[2]
+//indexCount = InData[3]
+
 Component* MeshComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 	Component* cmp = (Component*)malloc(sizeof(Component));
 	if (!cmp) return NULL;

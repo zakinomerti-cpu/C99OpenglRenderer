@@ -13,12 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\Components">
+      <UniqueIdentifier>{632033bd-cbbe-4566-8e3c-b7b0f7c85d46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\LowLevelObjects">
+      <UniqueIdentifier>{e5bc20ea-bce3-4794-a693-259c639adab2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Components\header">
+      <UniqueIdentifier>{1b69d0a7-96c1-4c5e-9a67-728c1f56f668}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="MeshObjects.c">
@@ -39,20 +45,26 @@
     <ClCompile Include="platform.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="MeshComponent.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderComponent.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureComponent.c">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Components</Filter>
     </ClCompile>
     <ClCompile Include="RenderComponent.c">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderComponent.c">
+      <Filter>Исходные файлы\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureComponent.c">
+      <Filter>Исходные файлы\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.c">
+      <Filter>Исходные файлы\LowLevelObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.c">
+      <Filter>Исходные файлы\LowLevelObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.c">
+      <Filter>Исходные файлы\LowLevelObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -81,7 +93,7 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Исходные файлы\Components\header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

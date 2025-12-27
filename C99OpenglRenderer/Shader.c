@@ -107,6 +107,16 @@ void setVertSh(Shader* shader, const char* src) {
 	memcpy(shader->vertexShaderSource, src, len + 1);
 }
 
+void ShaderObjectBind(Shader* shd) {
+	if(shd->isReady)
+		glUseProgram(shd->shaderProgram);
+}
+
+void ShaderObjectUnBind(Shader* shd) {
+	if(shd->isReady)
+		glUseProgram(0);
+}
+
 Shader* Shader_new(const char* shaderName) {
 	if (shaderName == NULL) {
 		printf("Shader must have own name to init!\n");
@@ -131,6 +141,9 @@ Shader* Shader_new(const char* shaderName) {
 	shd->setVertexShader = setVertSh;
 	shd->setFragmentShader = setFragSh;
 	shd->shaderInit = shaderInit;
+
+	shd->shaderBind = ShaderObjectBind;
+	shd->shaderUnBind = ShaderObjectUnBind;
 
 	return shd;
 }

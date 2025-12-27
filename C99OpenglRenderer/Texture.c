@@ -1,17 +1,18 @@
+#include "Texture.h"
 
-/*#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 #include "Texture.h"
 #include "stdio.h"
 #include "GL/glew.h"
 #include "stb_image.h"
 
-void bindTexture(Texture* tx, GLuint prg) {
+void BindTextureObject(Texture* tx, GLuint prg) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tx->tex);
 	glUniform1i(tx->loc, 0);
 }
 
-void unbindTexture(Texture* tx) {
+void UnBindTextureObject(Texture* tx) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -21,8 +22,8 @@ Texture* Texture_new(const char* path, unsigned int shd_prg) {
 	Texture* out = (Texture*)malloc(sizeof(Texture));
 	if (!out) return NULL;
 
-	out->bindTexture = bindTexture;
-	out->unbindTexture = unbindTexture;
+	out->bindTexture = BindTextureObject;
+	out->unbindTexture = UnBindTextureObject;
 
 	out->tex = 0;
 	glGenTextures(1, &out->tex);
@@ -54,4 +55,3 @@ Texture* Texture_new(const char* path, unsigned int shd_prg) {
 	return out;
 
 }
-*/

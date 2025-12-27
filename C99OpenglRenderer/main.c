@@ -40,9 +40,13 @@ void init() {
 	scn = Scene_new(1024);
 	Entity* ent = Entity_new("cube");
 
+	Mesh* ms = createCube();
 
 	dataArr* MeshCompData = dataArr_new();
-	MeshCompData->addToDataArr(MeshCompData, createCube());
+	MeshCompData->addToDataArr(MeshCompData, ms->vertices);
+	MeshCompData->addToDataArr(MeshCompData, ms->vertexCount);
+	MeshCompData->addToDataArr(MeshCompData, ms->indices);
+	MeshCompData->addToDataArr(MeshCompData, ms->indexCount);
 	Component* Meshcmp = MeshComponent_new(NULL, NULL, MeshCompData);
 	Meshcmp->Init(Meshcmp);
 	ent->addComponent(ent, Meshcmp);

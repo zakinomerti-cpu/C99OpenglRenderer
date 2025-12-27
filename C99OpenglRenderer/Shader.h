@@ -7,6 +7,8 @@ typedef struct Shader {
 	void (*setShaderName)(struct Shader*, const char*);
 	void (*setVertexShader)(struct Shader*, const char*);
 	void (*setFragmentShader)(struct Shader*, const char*);
+	void (*shaderBind)(struct Shader*);
+	void (*shaderUnBind)(struct Shader*);
 	uint (*shaderInit)(struct Shader*);
 
 	char* shaderName;

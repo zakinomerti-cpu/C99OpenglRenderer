@@ -19,10 +19,11 @@ void ShaderCmpInit(Component* cmp) {
 void ShaderCmpBind(Component* cmp) {
 
 	Shader* shader = (Shader*)cmp->LocData->getByIndex(cmp->LocData, 2);
-	glUseProgram(shader->shaderProgram);
+	shader->shaderBind(shader);
 }
 void ShaderCmpUnBind(Component* cmp) {
-	glUseProgram(0);
+	Shader* shader = (Shader*)cmp->LocData->getByIndex(cmp->LocData, 2);
+	shader->shaderUnBind(shader);
 }
 
 void ShaderCmpAddChild(Component* cmp, Component* chd) {}

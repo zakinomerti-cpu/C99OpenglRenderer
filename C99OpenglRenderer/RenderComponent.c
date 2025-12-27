@@ -81,7 +81,7 @@ void RenderCmpBind(Component* cmp) {
 	glEnableVertexAttribArray(*texCrdAttrib);
 
 	TexCmp->Bind(TexCmp);
-	Mesh* msh = (Mesh*)MshCmp->InData->getByIndex(MshCmp->InData, 0);
+	Mesh* msh = (Mesh*)MshCmp->LocData->getByIndex(MshCmp->LocData, 0);
 
 	GLint eboBind = 0;
 	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &eboBind);
