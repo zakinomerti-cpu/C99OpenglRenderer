@@ -43,6 +43,8 @@ void TextureCmpInit(Component* cmp) {
 	cmp->LocData->addToDataArr(cmp->LocData, textureID);
 	cmp->LocData->addToDataArr(cmp->LocData, Location);
 
+	cmp->isReady = 1;
+
 }
 void TextureCmpBind(Component* cmp) {
 
@@ -80,5 +82,9 @@ Component* TextureComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 		free(cmp);
 		return NULL;
 	}
+
+	cmp->isReady = 0;
+	cmp->chdCount = -1;
+	cmp->child = NULL;
 	return cmp;
 }

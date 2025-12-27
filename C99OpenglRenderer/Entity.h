@@ -20,11 +20,6 @@ typedef struct Entity {
 	void (*entityInit)(struct Entity*);
 	char* (*getEntityName)(struct Entity*);
 
-	unsigned int posAttrib;
-	unsigned int normAttrib;
-	unsigned int textureAttrib;
-	unsigned int texCrdAttrib;
-
 	unsigned char isEntInit;
 	char* entityName;
 

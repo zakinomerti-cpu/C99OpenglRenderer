@@ -5,6 +5,7 @@ typedef enum ComponentVTable {
 	CMP_CUSTOM,
 	CMP_SHADER,
 	CMP_TEXTURE,
+	CMP_RENDER,
 	CMP_MESH,
 	CMP_SCRIPT,
 	CMP_CAMERA,
@@ -24,11 +25,16 @@ typedef struct Component {
 	void (*DeleteComponent)(struct Component*);
 	Entity* parentEntity;
 
+	void (*AddChild)(struct Component*, struct Component*);
+
 	dataArr* InData;
 	dataArr* LocData;
 	dataArr* child;
 
 	int isReady;
+	// если chdCount = -1 значит обьект
+	// не может иметь детей
+	int chdCount;
 
 } Component;
 

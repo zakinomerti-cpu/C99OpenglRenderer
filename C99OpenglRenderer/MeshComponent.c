@@ -32,6 +32,8 @@ void ComInit(Component* cmp) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	cmp->isReady = 1;
 }
 
 void bind(Component* cmp) {
@@ -84,6 +86,10 @@ Component* MeshComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 		free(cmp);
 		return NULL;
 	}
+
+	cmp->child = NULL;
+	cmp->isReady = 0;
+	cmp->chdCount = -1;
 
 	return cmp;
 }

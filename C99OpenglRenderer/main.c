@@ -10,14 +10,14 @@
 
 const char* standart_vs =
 "#version 120\n"
-"attribute vec3 position;"
-"attribute vec3 normal;"
-"attribute vec2 texcoord;"
-"varying vec2 vTexCoord;"
-"varying vec3 vNormal;"
+"attribute vec3 position;\n"
+"attribute vec3 norm;\n"
+"attribute vec2 texcoord;\n"
+"varying vec2 vTexCoord;\n"
+"varying vec3 vNormal;\n"
 "void main() {"
 "	gl_Position = gl_ModelViewProjectionMatrix * vec4(position, 1.0);"
-"	vNormal = normal;"
+"	vNormal = norm;"
 "	vTexCoord = texcoord;"
 "}";
 

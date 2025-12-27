@@ -13,6 +13,8 @@ void ShaderCmpInit(Component* cmp) {
 	shd->shaderInit(shd);
 	cmp->LocData->addToDataArr(cmp->LocData, shd);
 
+	cmp->isReady = 1;
+
 }
 void ShaderCmpBind(Component* cmp) {
 
@@ -44,8 +46,17 @@ Component* ShaderComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
 	cmp->parentEntity = ent;
 
 	cmp->InData = InData;
+	cmp->child = NULL;
 	cmp->LocData = dataArr_new();
+	if (!cmp->LocData) {
+		free(cmp);
+		return NULL;
+	}
 	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 0));
 	cmp->LocData->addToDataArr(cmp->LocData, InData->getByIndex(InData, 1));
+	
+	cmp->isReady = 0;
+	cmp->chdCount = -1;
+	
 	return cmp;
 }
