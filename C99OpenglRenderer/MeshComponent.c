@@ -1,68 +1,80 @@
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 #include "Component.h"
 #include "dataArray.h"
 #include "Mesh.h"
-#include <stdlib.h>
 
-void ComInit(Component* cmp) {
+#define ubyte unsigned char
 
-	dataArr* data = cmp->InData;
+void MeshCmpInit(Component* cmp) {
+	cmp->m_Object = dataArr_new();
+}
+void MeshCmpBind(Component* cmp) {
+
+}
+void MeshCmpUnBind(Component* cmp) {}
+void MeshCmpSystemCreateEvent(Component* cmp, SYSTEM* sys) {}
+void MeshCmpSystemUpdateEvent(Component* cmp, SYSTEM* sys) {}
+void MeshCmpAddObject(Component* cmp, dataArr* InData) {
 
 	Mesh* mesh = Mesh_new();
-	mesh->setVertices(mesh, data->getByIndex(data, 0), data->getByIndex(data, 1));
-	mesh->setIndices(mesh, data->getByIndex(data, 2), data->getByIndex(data, 3));
+	float* vertices = (float*)InData->getByIndex(InData, 0);
+	int* vertexCount = (int*)InData->getByIndex(InData, 1);
+	ubyte* indices = (ubyte*)InData->getByIndex(InData, 2);
+	int* indexCount = (int*)InData->getByIndex(InData, 3);
+	mesh->setVertices(mesh, vertices, vertexCount);
+	mesh->setIndices(mesh, indices, indexCount);
 	mesh->init(mesh);
-	cmp->LocData->addToDataArr(cmp->LocData, mesh);
-	cmp->isReady = 1;
+	cmp->m_Object->addToDataArr(cmp->m_Object, mesh);
+	cmp->m_iIsReady = 1;
+
 }
+void MeshCmpAddChild(Component* prnt, Component* cmp) {}
+void MeshCmpRemoveChild(Component* cmp, int index) {}
 
-void bind(Component* cmp) {
-	Mesh* mesh = (Mesh*)cmp->LocData->getByIndex(cmp->LocData, 0);
-	mesh->bind(mesh);
-}
-
-void unBind(Component* cmp) {
-	Mesh* mesh = (Mesh*)cmp->LocData->getByIndex(cmp->LocData, 0);
-	mesh->unBind(mesh);
-}
-void addChild(Component* cmp1, Component* cmp2) { /* тут не реализовано*/ }
-void removeChild(Component* cmp1, Component* cmp2) { /* тут не реализовано*/ }
-
-// только вне потока opengl, если знаешь
-// что компонент точно пойдет на удаление
-void DeleteMeshComponent(Component* cmp) {
-	cmp->Init = NULL;
-	cmp->Bind = NULL;
-	cmp->UnBind = NULL;
-	cmp->DeleteComponent = NULL;
-	free(cmp);
-}
-
-// LocData[0] - Low Level Mesh Object
-//vertices = InData[0]
-//vertexCount = InData[1]
-//indices = InData[2]
-//indexCount = InData[3]
-
-Component* MeshComponent_new(Component* prnt, Entity* ent, dataArr* InData) {
-	Component* cmp = (Component*)malloc(sizeof(Component));
-	if (!cmp) return NULL;
-
-	cmp->Init = ComInit;
-	cmp->Bind = bind;
-	cmp->UnBind = unBind;
-	cmp->DeleteComponent = DeleteMeshComponent;
-	cmp->parentEntity = ent;
-
-	cmp->InData = InData;
-	cmp->LocData = dataArr_new();
-	if (!cmp->LocData) {
-		free(cmp);
+//имя копируется внутрь обьекта
+//InData при добавлении: arr[0] - vertices(float*), arr[1] - vertexCount(int) 
+//arr[2] - indices(unsigned char*), arr[3] - indexCount(int)
+Component* MeshComponent_new(Component* prnt,
+	Entity* ent,
+	char* CmpName)
+{
+	if (!CmpName) {
+		printf("Component must have own name");
 		return NULL;
 	}
+	Component* cmp = (Component*)malloc(sizeof(Component));	
+	if (!cmp) return NULL;
+	cmp->m_pName = (char*)malloc(sizeof(char)*(strlen(CmpName)+1));
+	if (!cmp->m_pName) { free(cmp); return NULL; }
+	memcpy(cmp->m_pName, CmpName, sizeof(CmpName)+1);
 
-	cmp->child = NULL;
-	cmp->isReady = 0;
-	cmp->chdCount = -1;
+	cmp->TagValue = CMP_MSHOBJ;
+	cmp->Init   = MeshCmpInit;
+	cmp->Bind   = MeshCmpBind;
+	cmp->UnBind = MeshCmpUnBind;
+	cmp->AddObject   = MeshCmpAddObject;
+	cmp->AddChild    = MeshCmpAddChild;
+	cmp->RemoveChild = MeshCmpRemoveChild;
+	cmp->SystemCreateEvent = MeshCmpSystemCreateEvent;
+	cmp->SystemUpdateEvent = MeshCmpSystemUpdateEvent;
+	cmp->m_Object = NULL;
+
+	//private Block
+	cmp->m_pParentEntity = ent;
+	cmp->m_InData = NULL;
+	cmp->m_LocData = NULL;
+	cmp->m_child = NULL;
+
+	//если m_bChdCount = -1 то
+	//компонент не может иметь детей
+	cmp->m_bChdCount = -1;
+
+	//если m_iSelectedObjet = -1 
+	//то компонент не имеет
+	//инициализированных обьектов
+	cmp->m_iSelectedObjet = -1;
 
 	return cmp;
 }
