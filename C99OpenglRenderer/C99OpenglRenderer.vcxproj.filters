@@ -102,7 +102,7 @@
       <Filter>Исходные файлы\Components\header</Filter>
     </ClInclude>
     <ClInclude Include="HashArray.h">
-      <Filter>Исходные файлы\tools</Filter>
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
