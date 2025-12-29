@@ -1,27 +1,26 @@
 #ifndef MESHCLASS_H
 #define MESHCLASS_H
 
-//mesh datatype
 typedef struct Mesh {
-	void (*init)(struct Mesh*);
+	char* meshName;
 	void (*setVertices)(struct Mesh*, float*, int);
 	void (*setIndices)(struct Mesh*, unsigned char*, int);
-	void (*bind)(struct Mesh*);
-	void (*unBind)(struct Mesh*);
+	void (*meshBind)(struct Mesh*);
+	void (*unBindMesh)(struct Mesh*);
+	void (*meshInit)(struct Mesh*);
 
-	//private block
 	int vertexCount;
 	int indexCount;
-	int isInit;
 	unsigned char* indices;
 	float* vertices;
 
 	unsigned int vbo;
 	unsigned int ibo;
+	char isReady;
 
 } Mesh;
 
-Mesh* Mesh_new();
+Mesh* Mesh_new(char* meshName);
 void Mesh_delete(Mesh*);
 
 #endif

@@ -1,25 +1,22 @@
 #ifndef SHADERCLASS_H
 #define SHADERCLASS_H
 
-typedef unsigned int uint;
-
 typedef struct Shader {
-	void (*setShaderName)(struct Shader*, const char*);
+	char* shaderName;
 	void (*setVertexShader)(struct Shader*, const char*);
 	void (*setFragmentShader)(struct Shader*, const char*);
 	void (*shaderBind)(struct Shader*);
 	void (*shaderUnBind)(struct Shader*);
-	uint (*shaderInit)(struct Shader*);
+	unsigned int (*shaderInit)(struct Shader*);
 
-	char* shaderName;
 	char* vertexShaderSource;
 	char* fragmentShaderSource;
-	uint shaderProgram;
+	unsigned int shaderProgram;
 	char isReady;
 
 } Shader;
 
 Shader* Shader_new(const char* shaderName);
-void Shader_delete(Shader* shd);
+void Shader_delete(Shader*);
 
 #endif

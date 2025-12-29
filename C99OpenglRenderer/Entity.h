@@ -12,22 +12,22 @@ typedef struct Entity {
 	float rotx, roty, rotz;
 	float sizex, sizey, sizez;
 
-	void (*draw)(struct Entity*);
-	void (*addComponent)(struct Entity*, Component*);
+	char* entityName;
 	void (*setPosition)(struct Entity*, float, float, float);
 	void (*setRotation)(struct Entity*, float, float, float);
 	void (*setScale)(struct Entity*, float, float, float);
+	void (*setInputData)(struct Entity*, dataArr*);
 	void (*entityInit)(struct Entity*);
-	char* (*getEntityName)(struct Entity*);
+	void (*draw)(struct Entity*);
 
-	unsigned char isEntInit;
-	char* entityName;
+	dataArr* LocalData;
+	dataArr* InData;
 
-	dataArr* component;
+	char isReady;
 
 } Entity;
 
-Entity* Entity_new(const char* name);
+Entity* EntityCube_new(const char* name);
 void Entity_delete(Entity* ent);
 
 #endif

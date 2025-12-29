@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include <stdlib.h>
 #include "GL/glew.h"
+#include "string.h"
 
 void InitMeshObject(Mesh* mesh) {
 	glGenBuffers(1, &mesh->vbo);
@@ -18,6 +19,7 @@ void InitMeshObject(Mesh* mesh) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	mesh->isReady = 1;
 }
 
 void setVerticesMeshObject(Mesh* mesh, float* v, int vc) {
@@ -39,22 +41,27 @@ void UnBindMeshObject(Mesh* mesh) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Mesh* Mesh_new() {
+Mesh* Mesh_new(char* meshName) {
+	if (!meshName) return NULL;
 	Mesh* mesh = (Mesh*)malloc(sizeof(Mesh));
 	if (!mesh) return NULL;
+
+	mesh->meshName = NULL;
+	mesh->meshName = _strdup(meshName);
+	if (!mesh->meshName) { free(mesh); return NULL; }
 
 	mesh->vertices = NULL;
 	mesh->indices = NULL;
 
-	mesh->init = InitMeshObject;
+	mesh->meshInit = InitMeshObject;
 	mesh->setVertices = setVerticesMeshObject;
 	mesh->setIndices = setIndicesMeshObject;
-	mesh->bind = BindMeshObject;
-	mesh->unBind = UnBindMeshObject;
+	mesh->meshBind = BindMeshObject;
+	mesh->unBindMesh = UnBindMeshObject;
 
 	mesh->vertexCount = 0;
 	mesh->indexCount = 0;
-	mesh->isInit = 0;
+	mesh->isReady = 0;
 
 	mesh->vbo = 0;
 	mesh->ibo = 0;

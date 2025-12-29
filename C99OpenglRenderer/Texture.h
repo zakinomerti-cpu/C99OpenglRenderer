@@ -2,13 +2,23 @@
 #define TEXTURECLASS_H
 
 typedef struct Texture {
-	void (*bindTexture)(struct Texture*);
-	void (*unbindTexture)(struct Texture*);
-	void (*deleteTexture)(struct texture*);
+	char* textureName;
+	void (*setShaderProgram)(struct Texture*, unsigned int);
+	void (*setPathToTexture)(struct Texture*, const char* path);
+	void (*textureBind)(struct Texture*);
+	void (*textureUnBind)(struct Texture*);
+	void (*textureInit)(struct Texture*);
+
+	unsigned int sp;
 	unsigned int tex;
+	char* path;
+
 	int loc;
+	char isReady;
 
 } Texture;
 
-Texture* Texture_new(const char* path, unsigned int shd_prg);
+Texture* Texture_new(char* TextureName);
+void Texture_delete(Texture*);
+
 #endif

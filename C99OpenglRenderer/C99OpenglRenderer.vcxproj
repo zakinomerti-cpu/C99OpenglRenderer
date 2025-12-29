@@ -111,7 +111,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Python34\libs;lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;freeglut.lib;opengl32.lib;python34.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32.lib;freeglut.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,27 +135,24 @@
   <ItemGroup>
     <ClCompile Include="HashArray.c" />
     <ClCompile Include="Mesh.c" />
-    <ClCompile Include="MeshComponent.c" />
     <ClCompile Include="dataArray.c" />
-    <ClCompile Include="Entity.c" />
+    <ClCompile Include="EntityCube.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="MeshObjects.c" />
     <ClCompile Include="platform.c" />
     <ClCompile Include="platform.h" />
-    <ClCompile Include="RenderComponent.c" />
+    <ClCompile Include="Render.c" />
     <ClCompile Include="Scene.c" />
     <ClCompile Include="Shader.c" />
-    <ClCompile Include="ShaderComponent.c" />
     <ClCompile Include="Texture.c" />
-    <ClCompile Include="TextureComponent.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Component.h" />
     <ClInclude Include="dataArray.h" />
     <ClInclude Include="HashArray.h" />
     <ClInclude Include="MeshObjects.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Render.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
