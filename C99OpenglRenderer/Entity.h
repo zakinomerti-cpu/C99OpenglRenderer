@@ -18,6 +18,9 @@ typedef struct Entity {
 	void (*setStartScript)(struct Entity*, const char*);
 	void (*setUpdateScript)(struct Entity*, const char*);
 
+	void (*onStart)(struct Entity*);
+	void (*onUpdate)(struct Entity*);
+
 	void (*entityInit)(struct Entity*);
 	void (*draw)(struct Entity*);
 
@@ -25,6 +28,8 @@ typedef struct Entity {
 	dataArr* InData;
 	Render* render;
 
+	const char* stScriptPath;
+	const char* updtScriptPath;
 	char isReady;
 
 } Entity;

@@ -7,6 +7,7 @@
 #include <string.h>
 #include "dataArray.h"
 #include "MeshObjects.h"
+#include "PythonHeader.h"
 
 const char* standart_vs =
 "#version 120\n"
@@ -81,6 +82,23 @@ void FUNC(setInputData)(Entity* ent, dataArr* InData) {
 	if (InData->size != 1) return;
 	ent->InData = InData;
 }
+void FUNC(setStartScript)(Entity* ent, const char* path) {
+	ent->stScriptPath = path;
+}
+void FUNC(setUpdateScript)(Entity* ent, const char* path) {
+	ent->updtScriptPath = path;
+}
+void FUNC(onStart)(Entity* ent) {
+	PythonScript* ps = PythonScript_new(ent, SCRIPT_START, "script");
+	if (!ps) return;
+
+	ps->scriptInit(ps, "script.py");
+	ps->scriptBind(ps);
+}
+void FUNC(onUpdate)(Entity* ent) {
+
+}
+
 void FUNC(EntityInit)(Entity* ent) {
 	if (!ent->InData) return;
 	ent->LocalData = dataArr_new();
@@ -118,9 +136,9 @@ void FUNC(EntityInit)(Entity* ent) {
 	rnd->renderInit(rnd);
 
 	ent->render = rnd;
-
-
 	ent->isReady = 1;
+
+	ent->onStart(ent);
 
 }
 void FUNC(Draw)(Entity* ent) {
@@ -144,12 +162,19 @@ Entity* EntityCube_new(const char* name) {
 	ent->setRotation = FUNC(SetRotation);
 	ent->setScale = FUNC(SetScale);
 	ent->setInputData = FUNC(setInputData);
+
+	ent->onStart = FUNC(onStart);
+	ent->onUpdate = FUNC(onUpdate);
+
 	ent->entityInit = FUNC(EntityInit);
 	ent->draw = FUNC(Draw);
 
 	ent->LocalData = NULL;
 	ent->InData = NULL;
 	ent->render = NULL;
+
+	ent->stScriptPath = NULL;
+	ent->updtScriptPath = NULL;
 
 	ent->isReady = 0;
 	return ent;

@@ -63,6 +63,12 @@
     <ClCompile Include="EntityCube.c">
       <Filter>Исходные файлы\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="PythonHeader.c">
+      <Filter>Исходные файлы\LowLevelObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicString.c">
+      <Filter>Исходные файлы\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene.h">
@@ -97,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="PythonHeader.h">
       <Filter>Исходные файлы\LowLevelObjects\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicString.h">
+      <Filter>Исходные файлы\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

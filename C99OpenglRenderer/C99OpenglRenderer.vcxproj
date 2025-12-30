@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DynamicString.c" />
     <ClCompile Include="HashArray.c" />
     <ClCompile Include="Mesh.c" />
     <ClCompile Include="dataArray.c" />
@@ -141,6 +142,7 @@
     <ClCompile Include="MeshObjects.c" />
     <ClCompile Include="platform.c" />
     <ClCompile Include="platform.h" />
+    <ClCompile Include="PythonHeader.c" />
     <ClCompile Include="Render.c" />
     <ClCompile Include="Scene.c" />
     <ClCompile Include="Shader.c" />
@@ -148,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dataArray.h" />
+    <ClInclude Include="DynamicString.h" />
     <ClInclude Include="HashArray.h" />
     <ClInclude Include="MeshObjects.h" />
     <ClInclude Include="Entity.h" />
