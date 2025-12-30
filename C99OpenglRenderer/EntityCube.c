@@ -36,14 +36,46 @@ const char* standart_fs =
 #define FUNC(name) PREFIX##name
 
 void FUNC(SetPosition)(Entity* ent, float x, float y, float z) {
-	ent->posx = x; ent->posy = y; ent->posz;
+	ent->render->pos[0] = x;
+	ent->render->pos[1] = y;
+	ent->render->pos[2] = z;
 }
 void FUNC(SetRotation)(Entity* ent, float x, float y, float z) {
-	ent->rotx = x; ent->roty = y; ent->rotz = z;
+	ent->render->rot[0] = x;
+	ent->render->rot[1] = y;
+	ent->render->rot[2] = z;
 }
 void FUNC(SetScale)(Entity* ent, float x, float y, float z) {
-	ent->sizex = x; ent->sizey = y; ent->sizez = z;
+	ent->render->size[0] = x;
+	ent->render->size[1] = y;
+	ent->render->size[2] = z;
 }
+float* FUNC(GetPosition)(Entity* ent) {
+	float* pos = (float*)malloc(sizeof(float)*3);
+	if (!pos) return;
+	pos[0] = ent->render->pos[0];
+	pos[1] = ent->render->pos[1];
+	pos[2] = ent->render->pos[2];
+	return pos;
+}
+float* FUNC(getRotation)(Entity* ent) {
+	float* rot = (float*)malloc(sizeof(float) * 3);
+	if (!rot) return;
+	rot[0] = ent->render->rot[0];
+	rot[1] = ent->render->rot[1];
+	rot[2] = ent->render->rot[2];
+	return rot;
+}
+float* FUNC(GetScale)(Entity* ent) {
+	float* size = (float*)malloc(sizeof(float) * 3);
+	if (!size) return;
+	size[0] = ent->render->size[0];
+	size[1] = ent->render->size[1];
+	size[2] = ent->render->size[2];
+	return size;
+}
+
+//fffffff
 void FUNC(setInputData)(Entity* ent, dataArr* InData) {
 	if (!InData) return;
 	if (InData->size != 1) return;
@@ -80,12 +112,14 @@ void FUNC(EntityInit)(Entity* ent) {
 	tex->textureInit(tex);
 
 	if (!(tex->isReady && shd->isReady && mesh->isReady)) return;
+	rnd->setMesh(rnd, mesh);
+	rnd->setTexture(rnd, tex);
+	rnd->setShader(rnd, shd);
+	rnd->renderInit(rnd);
 
-	ent->LocalData = dataArr_new();
-	ent->LocalData->addToDataArr(ent->LocalData, mesh);
-	ent->LocalData->addToDataArr(ent->LocalData, shd);
-	ent->LocalData->addToDataArr(ent->LocalData, tex);
-	ent->LocalData->addToDataArr(ent->LocalData, rnd);
+	ent->render = rnd;
+
+
 	ent->isReady = 1;
 
 }
@@ -94,15 +128,7 @@ void FUNC(Draw)(Entity* ent) {
 		printf("entity %s not ready to draw", ent->entityName);
 	}
 
-	Texture* tx = (Texture*)ent->LocalData->getByIndex(ent->LocalData, 2);
-	Shader* shd = (Shader*)ent->LocalData->getByIndex(ent->LocalData, 1);
-	Mesh* mesh = (Mesh*)ent->LocalData->getByIndex(ent->LocalData, 0);
-
-	Render* rnd = (Render*)ent->LocalData->getByIndex(ent->LocalData, 3);
-	rnd->setMesh(rnd, mesh);
-	rnd->setTexture(rnd, tx);
-	rnd->setShader(rnd, shd);
-
+	Render* rnd = ent->render;
 	rnd->rend(rnd);
 }
 
@@ -110,10 +136,6 @@ Entity* EntityCube_new(const char* name) {
 	if (!name) return NULL;
 	Entity* ent = (Entity*)malloc(sizeof(Entity));
 	if (!ent) return;
-
-	ent->posx = ent->posy = ent->posz = 0.0f;
-	ent->rotx = ent->roty = ent->rotz = 0.0f;
-	ent->sizex = ent->sizey = ent->sizez = 1.0f;
 
 	ent->entityName = NULL;
 	ent->entityName = _strdup(name);
@@ -127,6 +149,7 @@ Entity* EntityCube_new(const char* name) {
 
 	ent->LocalData = NULL;
 	ent->InData = NULL;
+	ent->render = NULL;
 
 	ent->isReady = 0;
 	return ent;

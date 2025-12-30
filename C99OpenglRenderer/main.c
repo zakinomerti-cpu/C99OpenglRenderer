@@ -1,11 +1,7 @@
-﻿#include "GL/glew.h"
-#include "GL/freeglut.h"
-#include "Scene.h"
+﻿#include "Scene.h"
 #include "platform.h"
-#include "MeshObjects.h"
-#include "Entity.h"
 #include "dataArray.h"
-#include "Shader.h"
+#include "Entity.h"
 
 Scene* scn;
 

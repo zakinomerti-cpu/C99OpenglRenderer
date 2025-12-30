@@ -2,26 +2,28 @@
 #define ENTITYCLASS_H
 
 typedef struct dataArr dataArr;
-typedef struct Texture Texture;
-typedef struct Shader Shader;
-typedef struct Mesh Mesh;
-typedef struct Component Component;
+typedef struct Render Render;
 
 typedef struct Entity {
-	float posx, posy, posz;
-	float rotx, roty, rotz;
-	float sizex, sizey, sizez;
-
 	char* entityName;
 	void (*setPosition)(struct Entity*, float, float, float);
 	void (*setRotation)(struct Entity*, float, float, float);
 	void (*setScale)(struct Entity*, float, float, float);
+
+	float* (*getPosition)(struct Entity*);
+	float* (*getRotation)(struct Entity*);
+	float* (*getScale)(struct Entity*);
+
 	void (*setInputData)(struct Entity*, dataArr*);
+	void (*setStartScript)(struct Entity*, const char*);
+	void (*setUpdateScript)(struct Entity*, const char*);
+
 	void (*entityInit)(struct Entity*);
 	void (*draw)(struct Entity*);
 
 	dataArr* LocalData;
 	dataArr* InData;
+	Render* render;
 
 	char isReady;
 

@@ -8,6 +8,7 @@
 #include "Texture.h"
 
 #include "GL/glew.h"
+#include "dataArray.h"
 
 void RenderObjectSetMesh(Render* render, Mesh* msh) {
     if (!msh) {
@@ -55,25 +56,93 @@ void RenderObjectSetTexture(Render* render, Texture* tex) {
 }
 
 void RenderObjectInit(Render* render) {
-    if (!(render->shad && render->mesh)) {
-        render->mesh == NULL ?
-            printf("Render Object %s does not init because of mesh", render->name) :
-            printf("Render Object %s does not init because of shader", render->name);
-    };
+    GLuint* posAttrib = (GLuint*)malloc(sizeof(GLuint)); if (!posAttrib) return;
+    GLuint* normAttrib = (GLuint*)malloc(sizeof(GLuint)); if (!normAttrib) return;
+    GLuint* textureAttrib = (GLuint*)malloc(sizeof(GLuint)); if (!textureAttrib) return;
+    GLuint* texCrdAttrib = (GLuint*)malloc(sizeof(GLuint)); if (!texCrdAttrib) return;
+    (*posAttrib) = glGetAttribLocation(render->shad->shaderProgram, "position");
+    (*normAttrib) = glGetAttribLocation(render->shad->shaderProgram, "norm");
+    (*textureAttrib) = glGetUniformLocation(render->shad->shaderProgram, "u_tex");
+    (*texCrdAttrib) = glGetAttribLocation(render->shad->shaderProgram, "texcoord");
+
+    render->mesh->meshBind(render->mesh);
+
+    glEnableVertexAttribArray(*posAttrib);
+    glVertexAttribPointer(*posAttrib, 3, GL_FLOAT, GL_FALSE,
+        8 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(*normAttrib);
+    glVertexAttribPointer(*normAttrib, 3, GL_FLOAT, GL_FALSE,
+        8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    glEnableVertexAttribArray(*texCrdAttrib);
+    glVertexAttribPointer(*texCrdAttrib, 2, GL_FLOAT, GL_FALSE,
+        8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+    render->mesh->unBindMesh(render->mesh);
+
+    render->unData = dataArr_new();
+    render->unData->addToDataArr(render->unData, posAttrib);
+    render->unData->addToDataArr(render->unData, normAttrib);
+    render->unData->addToDataArr(render->unData, textureAttrib);
+    render->unData->addToDataArr(render->unData, texCrdAttrib);
+
     render->isReady = (render->tex == NULL) ? 1 : 2;
 }
 
+void RenderObjectSetPostion(Render* render, float x, float y, float z) {
+    render->pos[0] = x;
+    render->pos[1] = y;
+    render->pos[2] = z;
+}
+void RenderObjectSetRotation(Render* render, float x, float y, float z) {
+    render->rot[0] = x;
+    render->rot[1] = y;
+    render->rot[2] = z;
+}
+void RenderObjectSetScale(Render* render, float x, float y, float z) {
+    render->size[0] = x;
+    render->size[1] = y;
+    render->size[2] = z;
+}
+
 void RenderObjectRend(Render* render) {
-    glBegin(GL_TRIANGLES);
 
-    glLoadIdentity();
-    glTranslatef(0.0, 0.0, -3.0);
+    render->shad->shaderBind(render->shad);
+    glPushMatrix();
 
-    glVertex3f(-0.5f, -0.5f, .0);
-    glVertex3f(0.5f, -0.5f, .0);
-    glVertex3f(0.0f, 0.5f, .0);
+    glTranslatef(render->pos[0], render->pos[1], render->pos[2]);
+    glRotatef(render->rot[0], 1, 0, 0);
+    glRotatef(render->rot[1], 0, 1, 0);
+    glRotatef(render->rot[2], 0, 0, 1);
+    glScalef(render->size[0], render->size[1], render->size[2]);
 
-    glEnd();
+    render->mesh->meshBind(render->mesh);
+
+    GLuint* posAttrib = (GLuint*)render->unData->getByIndex(render->unData, 0);
+    GLuint* normAttrib = (GLuint*)render->unData->getByIndex(render->unData, 1);
+    GLuint* textureAttrib = (GLuint*)render->unData->getByIndex(render->unData, 2);
+    GLuint* texCrdAttrib = (GLuint*)render->unData->getByIndex(render->unData, 3);
+    glEnableVertexAttribArray(*posAttrib);
+    glEnableVertexAttribArray(*normAttrib);
+    glEnableVertexAttribArray(*texCrdAttrib);
+
+    render->tex->textureBind(render->tex);
+
+    GLint eboBind = 0;
+    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &eboBind);
+
+    glDrawElements(GL_TRIANGLES, render->mesh->indexCount, GL_UNSIGNED_BYTE, 0);
+
+    glDisableVertexAttribArray(*posAttrib);
+    glDisableVertexAttribArray(*normAttrib);
+    glDisableVertexAttribArray(*texCrdAttrib);
+
+    render->tex->textureUnBind(render->tex);
+    render->mesh->unBindMesh(render->mesh);
+
+    glPopMatrix();
+    render->shad->shaderUnBind(render->shad);
 }
 
 //isReady 0 - not init
@@ -96,6 +165,20 @@ Render* Render_new(char* name) {
     render->setTexture = RenderObjectSetTexture;
     render->renderInit = RenderObjectInit;
     render->rend = RenderObjectRend;
+
+    render->unSize = 0;
+    render->unData = NULL;
+
+    render->pos[0] = 0.0f;
+    render->pos[1] = 0.0f;
+    render->pos[2] = 0.0f;
+    render->rot[0] = 0.0f;
+    render->rot[1] = 0.0f;
+    render->rot[2] = 0.0f;
+    render->size[0] = 1.0f;
+    render->size[1] = 1.0f;
+    render->size[2] = 1.0f;
+
     render->isReady = 0;
     return render;
 }
