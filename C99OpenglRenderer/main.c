@@ -30,6 +30,8 @@ int main(int argc, char** argv) {
 	plt->createWindow(plt, "window", 800, 600);
 	plt->PlatformInit(plt);
 
+	scn->setEngineContext(scn, plt->getEngineContext(plt));
+
 	while (!plt->shouldClose(plt)) {
 		plt->render(plt);
 	}

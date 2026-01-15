@@ -7,7 +7,14 @@
 #include <string.h>
 #include "dataArray.h"
 #include "MeshObjects.h"
-#include "PythonHeader.h"
+#include "EngineContext.h"
+
+float vel[3];  // скорость
+float wishspeed;  // желаемая скорость
+const float accel = 10.0f;  // разгон (tune: 5-15)
+const float friction = 8.0f;  // трение на земле (6-10)
+const float airaccel = 2.5f;  // в воздухе (меньше)
+
 
 const char* standart_vs =
 "#version 120\n"
@@ -89,15 +96,75 @@ void FUNC(setUpdateScript)(Entity* ent, const char* path) {
 	ent->updtScriptPath = path;
 }
 void FUNC(onStart)(Entity* ent) {
-	PythonScript* ps = PythonScript_new(ent, SCRIPT_START, "script");
-	if (!ps) return;
-
-	ps->scriptInit(ps, "script.py");
-	ps->scriptBind(ps);
-}
-void FUNC(onUpdate)(Entity* ent) {
 
 }
+void FUNC(onUpdate)(Entity* ent, EngineCtx* ctx) {
+	if (!ctx || !ent || !ent->render) return;
+
+	// static, чтобы помнить прошлый кадр
+	static unsigned long long lastDt = 0;
+
+	// deltaTime в секундах
+	float deltaTime = (ctx->dt - lastDt) * 0.01f;
+	lastDt = ctx->dt;
+
+	// защита от первого кадра / пауз
+	if (deltaTime <= 0.0f || deltaTime > 0.1f)
+		deltaTime = 0.016f;
+
+	// параметры движения (quake/source-like)
+	const float accel = 20.0f;
+	const float friction = 10.0f;
+	const float maxSpeed = 5.0f;
+
+	// скорость (упрощённо, только XZ)
+	static float vx = 0.0f;
+	static float vz = 0.0f;
+
+	float wishX = 0.0f;
+	float wishZ = 0.0f;
+
+	// ввод
+	if (ctx->keys['W'] || ctx->keys['w']) wishZ -= 1.0f;
+	if (ctx->keys['S'] || ctx->keys['s']) wishZ += 1.0f;
+	if (ctx->keys['D'] || ctx->keys['d']) wishX += 1.0f;
+	if (ctx->keys['A'] || ctx->keys['a']) wishX -= 1.0f;
+
+	// нормализация направления
+	float len = sqrtf(wishX * wishX + wishZ * wishZ);
+	if (len > 0.0f) {
+		wishX /= len;
+		wishZ /= len;
+
+		// ускорение
+		vx += wishX * accel * deltaTime;
+		vz += wishZ * accel * deltaTime;
+	}
+
+	// ограничение скорости
+	float speed = sqrtf(vx * vx + vz * vz);
+	if (speed > maxSpeed) {
+		vx = (vx / speed) * maxSpeed;
+		vz = (vz / speed) * maxSpeed;
+	}
+
+	// трение (если нет ввода)
+	if (len == 0.0f) {
+		float drop = friction * deltaTime;
+		float newSpeed = speed - drop;
+		if (newSpeed < 0.0f) newSpeed = 0.0f;
+
+		if (speed > 0.0f) {
+			vx *= newSpeed / speed;
+			vz *= newSpeed / speed;
+		}
+	}
+
+	// движение
+	ent->render->pos[0] += vx * deltaTime;
+	ent->render->pos[2] += vz * deltaTime;
+}
+
 
 void FUNC(EntityInit)(Entity* ent) {
 	if (!ent->InData) return;

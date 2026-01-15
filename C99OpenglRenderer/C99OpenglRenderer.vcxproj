@@ -142,7 +142,6 @@
     <ClCompile Include="MeshObjects.c" />
     <ClCompile Include="platform.c" />
     <ClCompile Include="platform.h" />
-    <ClCompile Include="PythonHeader.c" />
     <ClCompile Include="Render.c" />
     <ClCompile Include="Scene.c" />
     <ClCompile Include="Shader.c" />
@@ -151,11 +150,11 @@
   <ItemGroup>
     <ClInclude Include="dataArray.h" />
     <ClInclude Include="DynamicString.h" />
+    <ClInclude Include="EngineContext.h" />
     <ClInclude Include="HashArray.h" />
     <ClInclude Include="MeshObjects.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="PythonHeader.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />

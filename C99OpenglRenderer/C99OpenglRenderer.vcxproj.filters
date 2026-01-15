@@ -25,6 +25,9 @@
     <Filter Include="Исходные файлы\Entity">
       <UniqueIdentifier>{921f89f1-52a3-4d8f-ae02-2bd8d92bdd45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\platform">
+      <UniqueIdentifier>{2cb77c6a-89ea-4074-9f8d-8a6a78480a6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -37,12 +40,6 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Scene.c">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="platform.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClCompile>
-    <ClCompile Include="platform.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Texture.c">
@@ -63,11 +60,14 @@
     <ClCompile Include="EntityCube.c">
       <Filter>Исходные файлы\Entity</Filter>
     </ClCompile>
-    <ClCompile Include="PythonHeader.c">
-      <Filter>Исходные файлы\LowLevelObjects</Filter>
-    </ClCompile>
     <ClCompile Include="DynamicString.c">
       <Filter>Исходные файлы\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="platform.h">
+      <Filter>Исходные файлы\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform.c">
+      <Filter>Исходные файлы\platform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,11 +101,11 @@
     <ClInclude Include="Entity.h">
       <Filter>Исходные файлы\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="PythonHeader.h">
-      <Filter>Исходные файлы\LowLevelObjects\headers</Filter>
-    </ClInclude>
     <ClInclude Include="DynamicString.h">
       <Filter>Исходные файлы\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineContext.h">
+      <Filter>Исходные файлы\platform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

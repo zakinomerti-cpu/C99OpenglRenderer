@@ -3,6 +3,7 @@
 #include "HashArray.h"
 #include "dataArray.h"
 #include "stdlib.h"
+#include "EngineContext.h"
 
 void SceneObjectRenderScene(Scene* scn) {
 	int elementCount = scn->EntityArray->elementCount;
@@ -13,7 +14,10 @@ void SceneObjectRenderScene(Scene* scn) {
 		for (int i = 0; i < innerArr->size; i += 1) {
 			Entity* tempEntity = (Entity*)((HashArrayElement*)innerArr->
 				getByIndex(innerArr, i))->data;
-			if(tempEntity) tempEntity->draw(tempEntity);
+			if (tempEntity) {
+				tempEntity->draw(tempEntity);
+				tempEntity->onUpdate(tempEntity, scn->ectx);
+			}
 		}
 		
 	}
@@ -23,9 +27,15 @@ void SceneObjectAddEntity(Scene* scn, Entity* ent) {
 	scn->EntityArray->addObject(scn->EntityArray, ent, ent->entityName);
 }
 
+void SceneObjectSetEngineContext(Scene* scn, EngineCtx* ctx) {
+	scn->ectx = ctx;
+}
+
 Scene* Scene_new(int size) {
 	Scene* scn = (Scene*)malloc(sizeof(Scene));
 	if (!scn) return;
+	scn->ectx = NULL;
+	scn->setEngineContext = SceneObjectSetEngineContext;
 	scn->EntityArray = HashArray_new(size);
 	scn->renderScene = SceneObjectRenderScene;
 	scn->addEntity = SceneObjectAddEntity;

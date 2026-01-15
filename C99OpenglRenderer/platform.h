@@ -1,6 +1,8 @@
 #ifndef PLATFORMCLASS_H
 #define PLATFORMCLASS_H
 
+typedef struct EngineCtx EngineCtx;
+
 typedef struct Platform {
 	void (*PlatformInit)(struct Platform*);
 	void (*render)(struct Platform*);
@@ -8,11 +10,13 @@ typedef struct Platform {
 	void (*setDisplayFunc)(struct Platform*, void (*)(void));
 	unsigned char (*shouldClose)(struct Platform*);
 
+
 	void (*shutDown)(struct Platform*);
 	void (*setShutDownFunc)(struct Platform*, void(*)(void));
 	void (*createWindow)(struct Platform*, const char*, int, int);
 
 	//private
+	EngineCtx* (*getEngineContext)(struct Platform*);
 	void(*startFunc)(void);
 
 } Platform;

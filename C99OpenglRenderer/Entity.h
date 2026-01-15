@@ -3,6 +3,7 @@
 
 typedef struct dataArr dataArr;
 typedef struct Render Render;
+typedef struct EngineCtx EngineCtx;
 
 typedef struct Entity {
 	char* entityName;
@@ -19,7 +20,7 @@ typedef struct Entity {
 	void (*setUpdateScript)(struct Entity*, const char*);
 
 	void (*onStart)(struct Entity*);
-	void (*onUpdate)(struct Entity*);
+	void (*onUpdate)(struct Entity*, EngineCtx*);
 
 	void (*entityInit)(struct Entity*);
 	void (*draw)(struct Entity*);

@@ -1,10 +1,12 @@
-#include "platform.h"
+﻿#include "platform.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "GL/glew.h"
 #include "GL/freeglut.h"
+#include "EngineContext.h"
 
+EngineCtx ectx = {0};
 void(*displayFunc)(void) = NULL;
 unsigned char* shouldClose_ = NULL;
 
@@ -12,6 +14,20 @@ unsigned char* shouldClose_ = NULL;
 void onClose() {
     shouldClose_ = 1;
 }
+
+void keyboard(unsigned char key, int x, int y) {
+    ectx.keys[key] = 1;
+}
+
+static void keyboard_up(unsigned char key, int x, int y) {
+    ectx.keys[key] = 0;  // для release (glutKeyboardUpFunc)
+}
+
+static void timer_cb(int value) {
+    ectx.dt += 1;
+    glutTimerFunc(16, timer_cb, 0);  // ← перезапуск для следующего кадра!
+}
+
 
 void privateDisplayFunc() {
 
@@ -42,7 +58,11 @@ void PlatformInit(Platform* plt) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glutTimerFunc(16, timer_cb, 0);
+    glutKeyboardFunc(keyboard);
+    glutKeyboardUpFunc(keyboard_up);  // optional
     glutCloseFunc(onClose);
+
 }
 void render(Platform* plt) {
     glutMainLoopEvent();
@@ -62,6 +82,10 @@ void createWindow(Platform* plt, const char* title, int w, int h) {
     glutCreateWindow(title);
 }
 
+EngineCtx* getEngineContext(Platform* plt) {
+    return &ectx;
+}
+
 Platform* GlutPlatform_new(int argc, char** argv) {
     Platform* plt = (Platform*)malloc(sizeof(Platform));
     if (!plt) return NULL;
@@ -79,10 +103,11 @@ Platform* GlutPlatform_new(int argc, char** argv) {
     plt->createWindow = createWindow;
     plt->shouldClose = shouldClose;
 
+    plt->getEngineContext = getEngineContext;
+
     shouldClose_ = (unsigned char*)malloc(sizeof(char));
     shouldClose_ = 0;
 
     plt->startFunc = NULL;
     return plt;
 }
-
