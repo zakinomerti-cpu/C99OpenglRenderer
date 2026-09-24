@@ -8,7 +8,7 @@
 #include "Texture.h"
 
 #include "GL/glew.h"
-#include "dataArray.h"
+#include "pVoidArray.h"
 
 void RenderObjectSetMesh(Render* render, Mesh* msh) {
     if (!msh) {
@@ -81,11 +81,11 @@ void RenderObjectInit(Render* render) {
 
     render->mesh->unBindMesh(render->mesh);
 
-    render->unData = dataArr_new();
-    render->unData->addToDataArr(render->unData, posAttrib);
-    render->unData->addToDataArr(render->unData, normAttrib);
-    render->unData->addToDataArr(render->unData, textureAttrib);
-    render->unData->addToDataArr(render->unData, texCrdAttrib);
+    pVoidArray_new(&render->unData);
+    render->unData->ops->push(render->unData, posAttrib);
+    render->unData->ops->push(render->unData, normAttrib);
+    render->unData->ops->push(render->unData, textureAttrib);
+    render->unData->ops->push(render->unData, texCrdAttrib);
 
     render->isReady = (render->tex == NULL) ? 1 : 2;
 }
@@ -119,10 +119,18 @@ void RenderObjectRend(Render* render) {
 
     render->mesh->meshBind(render->mesh);
 
-    GLuint* posAttrib = (GLuint*)render->unData->getByIndex(render->unData, 0);
-    GLuint* normAttrib = (GLuint*)render->unData->getByIndex(render->unData, 1);
-    GLuint* textureAttrib = (GLuint*)render->unData->getByIndex(render->unData, 2);
-    GLuint* texCrdAttrib = (GLuint*)render->unData->getByIndex(render->unData, 3);
+    GLuint* posAttrib = NULL;
+	render->unData->ops->get(render->unData, (void*)&posAttrib, 0);
+
+    GLuint* normAttrib = NULL;
+	render->unData->ops->get(render->unData, (void*)&normAttrib, 1);
+
+    GLuint* textureAttrib = NULL;
+	render->unData->ops->get(render->unData, (void*)&textureAttrib, 2);
+	
+    GLuint* texCrdAttrib = NULL;
+	render->unData->ops->get(render->unData, (void*)&texCrdAttrib, 3);
+
     glEnableVertexAttribArray(*posAttrib);
     glEnableVertexAttribArray(*normAttrib);
     glEnableVertexAttribArray(*texCrdAttrib);
@@ -158,7 +166,7 @@ Render* Render_new(char* name) {
     render->tex = NULL;
 
     render->name = NULL;
-    render->name = _strdup(name);
+    render->name = strdup(name);
     if (!render->name) { free(render); return NULL; }
     render->setMesh = RenderObjectSetMesh;
     render->setShader = RenderObjectSetShader;

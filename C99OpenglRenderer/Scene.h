@@ -2,11 +2,11 @@
 #define SCENECLASS_H
 
 typedef struct Entity Entity;
-typedef struct HashArray HashArray;
+typedef struct hashArray hashArray;
 typedef struct EngineCtx EngineCtx;
 
 typedef struct Scene {
-	HashArray* EntityArray;
+	hashArray* EntityArray;
 	void (*setEngineContext)(struct Scene*, EngineCtx*);
 	void (*renderScene)(struct Scene*);
 	void (*addEntity)(struct Scene*, Entity*);

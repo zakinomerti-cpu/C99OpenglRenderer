@@ -64,7 +64,7 @@ Texture* Texture_new(char* TextureName) {
 	if (!out) return NULL;
 
 	out->textureName = NULL;
-	out->textureName = _strdup(TextureName);
+	out->textureName = strdup(TextureName);
 	if (!out->textureName) { free(out); return NULL; }
 
 	out->setShaderProgram = SetShaderProgramTextureObject;

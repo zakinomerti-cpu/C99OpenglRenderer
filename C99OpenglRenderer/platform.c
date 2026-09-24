@@ -8,7 +8,7 @@
 
 EngineCtx ectx = {0};
 void(*displayFunc)(void) = NULL;
-unsigned char* shouldClose_ = NULL;
+unsigned char shouldClose_ = 0;
 
 //privateFunc
 void onClose() {
@@ -105,7 +105,6 @@ Platform* GlutPlatform_new(int argc, char** argv) {
 
     plt->getEngineContext = getEngineContext;
 
-    shouldClose_ = (unsigned char*)malloc(sizeof(char));
     shouldClose_ = 0;
 
     plt->startFunc = NULL;

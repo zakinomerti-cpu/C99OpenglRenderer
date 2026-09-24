@@ -1,13 +1,15 @@
 #include "Entity.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Render.h"
 #include <string.h>
-#include "dataArray.h"
 #include "MeshObjects.h"
 #include "EngineContext.h"
+#include "pVoidArray.h"
+#include "math.h"
 
 float vel[3];  // скорость
 float wishspeed;  // желаемая скорость
@@ -60,7 +62,7 @@ void FUNC(SetScale)(Entity* ent, float x, float y, float z) {
 }
 float* FUNC(GetPosition)(Entity* ent) {
 	float* pos = (float*)malloc(sizeof(float)*3);
-	if (!pos) return;
+	if (!pos) return NULL;
 	pos[0] = ent->render->pos[0];
 	pos[1] = ent->render->pos[1];
 	pos[2] = ent->render->pos[2];
@@ -68,7 +70,7 @@ float* FUNC(GetPosition)(Entity* ent) {
 }
 float* FUNC(getRotation)(Entity* ent) {
 	float* rot = (float*)malloc(sizeof(float) * 3);
-	if (!rot) return;
+	if (!rot) return NULL;
 	rot[0] = ent->render->rot[0];
 	rot[1] = ent->render->rot[1];
 	rot[2] = ent->render->rot[2];
@@ -76,7 +78,7 @@ float* FUNC(getRotation)(Entity* ent) {
 }
 float* FUNC(GetScale)(Entity* ent) {
 	float* size = (float*)malloc(sizeof(float) * 3);
-	if (!size) return;
+	if (!size) return NULL;
 	size[0] = ent->render->size[0];
 	size[1] = ent->render->size[1];
 	size[2] = ent->render->size[2];
@@ -84,7 +86,7 @@ float* FUNC(GetScale)(Entity* ent) {
 }
 
 //fffffff
-void FUNC(setInputData)(Entity* ent, dataArr* InData) {
+void FUNC(setInputData)(Entity* ent, pVoidArray* InData) {
 	if (!InData) return;
 	if (InData->size != 1) return;
 	ent->InData = InData;
@@ -168,17 +170,17 @@ void FUNC(onUpdate)(Entity* ent, EngineCtx* ctx) {
 
 void FUNC(EntityInit)(Entity* ent) {
 	if (!ent->InData) return;
-	ent->LocalData = dataArr_new();
+	pVoidArray_new(&ent->LocalData);
 	if (!ent->LocalData) return;
 
 	Texture* tex = Texture_new("texture1");
-	if (!tex) return NULL;
+	if (!tex) return;
 	Shader* shd = Shader_new("shader1");
-	if (!shd) { free(tex); return NULL; }
+	if (!shd) { free(tex); return; }
 	Mesh* mesh = Mesh_new("mesh1");
-	if (!mesh) { free(tex); free(shd); return NULL; }
+	if (!mesh) { free(tex); free(shd); return; }
 	Render* rnd = Render_new("render1");
-	if (!mesh) { free(tex); free(shd); free(mesh); return NULL; }
+	if (!mesh) { free(tex); free(shd); free(mesh); return; }
 
 	Mesh* submesh = createCube();
 	mesh->vertexCount = submesh->vertexCount;
@@ -193,7 +195,10 @@ void FUNC(EntityInit)(Entity* ent) {
 
 	//обязательно после инициализации
 	tex->setShaderProgram(tex, shd->shaderProgram);
-	tex->setPathToTexture(tex, (char*)ent->InData->getByIndex(ent->InData, 0));
+
+	char* path = NULL;
+	ent->InData->ops->get(ent->InData, (void*)&path, 0);
+	tex->setPathToTexture(tex, path);
 	tex->textureInit(tex);
 
 	if (!(tex->isReady && shd->isReady && mesh->isReady)) return;
@@ -220,10 +225,10 @@ void FUNC(Draw)(Entity* ent) {
 Entity* EntityCube_new(const char* name) {
 	if (!name) return NULL;
 	Entity* ent = (Entity*)malloc(sizeof(Entity));
-	if (!ent) return;
+	if (!ent) return NULL;
 
 	ent->entityName = NULL;
-	ent->entityName = _strdup(name);
+	ent->entityName = strdup(name);
 
 	ent->setPosition = FUNC(SetPosition);
 	ent->setRotation = FUNC(SetRotation);

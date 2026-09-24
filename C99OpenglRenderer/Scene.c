@@ -1,19 +1,23 @@
 #include "Scene.h"
 #include "Entity.h"
-#include "HashArray.h"
-#include "dataArray.h"
 #include "stdlib.h"
 #include "EngineContext.h"
+#include "hashArray.h"
+#include "pVoidArray.h"
+#include "string.h"
 
 void SceneObjectRenderScene(Scene* scn) {
-	int elementCount = scn->EntityArray->elementCount;
-	dataArr* arr = scn->EntityArray->Data;
+	int elementCount = scn->EntityArray->size;
+	pVoidArray* arr = (pVoidArray*)scn->EntityArray->buckets;
 	for (int iter = 0; iter < elementCount; iter+=1) {
-		dataArr* innerArr = (dataArr*)arr->getByIndex(arr, iter);
+		pVoidArray* innerArr = NULL;
+		arr->ops->get(arr, (void*)&innerArr, iter);
 		if (!innerArr) continue;
 		for (int i = 0; i < innerArr->size; i += 1) {
-			Entity* tempEntity = (Entity*)((HashArrayElement*)innerArr->
-				getByIndex(innerArr, i))->data;
+
+			Entity* tempEntity	= NULL;
+			innerArr->ops->get(innerArr, (void*)&tempEntity, i);
+
 			if (tempEntity) {
 				tempEntity->draw(tempEntity);
 				tempEntity->onUpdate(tempEntity, scn->ectx);
@@ -24,7 +28,10 @@ void SceneObjectRenderScene(Scene* scn) {
 }
 
 void SceneObjectAddEntity(Scene* scn, Entity* ent) {
-	scn->EntityArray->addObject(scn->EntityArray, ent, ent->entityName);
+	const char* key = ent->entityName;
+	size_t keylen = strlen(key);
+	void* value = (void*)ent;
+	scn->EntityArray->ops->put(scn->EntityArray, key, keylen, value);
 }
 
 void SceneObjectSetEngineContext(Scene* scn, EngineCtx* ctx) {
@@ -33,10 +40,12 @@ void SceneObjectSetEngineContext(Scene* scn, EngineCtx* ctx) {
 
 Scene* Scene_new(int size) {
 	Scene* scn = (Scene*)malloc(sizeof(Scene));
-	if (!scn) return;
+	if (!scn) return NULL;
 	scn->ectx = NULL;
 	scn->setEngineContext = SceneObjectSetEngineContext;
-	scn->EntityArray = HashArray_new(size);
+	
+	scn->EntityArray = NULL;
+	hashArray_new(&scn->EntityArray, size);
 	scn->renderScene = SceneObjectRenderScene;
 	scn->addEntity = SceneObjectAddEntity;
 

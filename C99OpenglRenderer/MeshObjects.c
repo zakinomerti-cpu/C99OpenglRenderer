@@ -1,5 +1,6 @@
 #include "MeshObjects.h"
 #include <stdlib.h>
+#include <string.h>
 #include "GL/glew.h"
 
 //КРИТИЧНО!!! формат 3, 3, 2

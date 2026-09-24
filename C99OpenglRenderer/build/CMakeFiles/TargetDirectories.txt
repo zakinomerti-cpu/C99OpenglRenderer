@@ -1,0 +1,6 @@
+/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/CMakeFiles/myapp.dir
+/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/CMakeFiles/edit_cache.dir
+/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/CMakeFiles/rebuild_cache.dir
+/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/_deps/noowncontainers-build/CMakeFiles/noownContainers.dir
+/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/_deps/noowncontainers-build/CMakeFiles/edit_cache.dir
+/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/_deps/noowncontainers-build/CMakeFiles/rebuild_cache.dir

@@ -1,7 +1,8 @@
 ﻿#include "Scene.h"
 #include "platform.h"
-#include "dataArray.h"
 #include "Entity.h"
+
+#include "pVoidArray.h"
 
 Scene* scn;
 
@@ -13,8 +14,9 @@ void init() {
 	scn = Scene_new(1024);
 	Entity* ent = EntityCube_new("cube");
 	
-	dataArr* InData = dataArr_new();
-	InData->addToDataArr(InData, "sky.bmp");
+	pVoidArray* InData;
+	pVoidArray_new(&InData);
+	InData->ops->push(InData, "sky.bmp");
 	ent->setInputData(ent, InData);
 	ent->entityInit(ent);
 	ent->setPosition(ent, 0, 0, -3);

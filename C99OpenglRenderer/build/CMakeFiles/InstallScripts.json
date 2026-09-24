@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/cmake_install.cmake",
+		"/home/xinitrix/projects/C99OpenglRenderer/C99OpenglRenderer/build/_deps/noowncontainers-build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

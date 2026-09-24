@@ -4,7 +4,7 @@
 typedef struct Texture Texture;
 typedef struct Shader Shader;
 typedef struct Mesh Mesh;
-typedef struct dataArr dataArr;
+typedef struct pVoidArray pVoidArray;
 
 typedef struct Render {
 	char* name;
@@ -24,7 +24,7 @@ typedef struct Render {
 	float pos[3];
 	float rot[3];
 	float size[3];
-	dataArr* unData;
+	pVoidArray* unData;
 
 	char isReady;
 } Render;

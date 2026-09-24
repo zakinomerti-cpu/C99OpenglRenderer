@@ -58,25 +58,26 @@ unsigned char createShader(Shader* shader) {
 	return 1;
 }
 
-void shaderInit(Shader* self) {
+unsigned int shaderInit(Shader* self) {
 	if (!self->vertexShaderSource) {
 		printf("%s error!\n", self->shaderName);
 		printf("vertex shader source does not initialized!!!\n");
-		return;
+		return -1;
 	}
 
 	if (!self->fragmentShaderSource) {
 		printf("%s error!\n", self->shaderName);
 		printf("fragment shader source does not initialized!!!\n");
-		return;
+		return -1;
 	}
 
 	if (!createShader(self)) {
 		printf("%s error!\n", self->shaderName);
 		printf("Shader compilation issue!\n");
-		return;
+		return -1;
 	}
 	self->isReady = 1;
+	return 1;
 }
 
 void setFragSh(Shader* shader, const char* src) {

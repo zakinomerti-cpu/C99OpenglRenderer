@@ -47,7 +47,7 @@ Mesh* Mesh_new(char* meshName) {
 	if (!mesh) return NULL;
 
 	mesh->meshName = NULL;
-	mesh->meshName = _strdup(meshName);
+	mesh->meshName = strdup(meshName);
 	if (!mesh->meshName) { free(mesh); return NULL; }
 
 	mesh->vertices = NULL;

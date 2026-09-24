@@ -1,7 +1,7 @@
 #ifndef ENTITYCLASS_H
 #define ENTITYCLASS_H
 
-typedef struct dataArr dataArr;
+typedef struct pVoidArray pVoidArray;
 typedef struct Render Render;
 typedef struct EngineCtx EngineCtx;
 
@@ -15,7 +15,7 @@ typedef struct Entity {
 	float* (*getRotation)(struct Entity*);
 	float* (*getScale)(struct Entity*);
 
-	void (*setInputData)(struct Entity*, dataArr*);
+	void (*setInputData)(struct Entity*, pVoidArray*);
 	void (*setStartScript)(struct Entity*, const char*);
 	void (*setUpdateScript)(struct Entity*, const char*);
 
@@ -25,8 +25,8 @@ typedef struct Entity {
 	void (*entityInit)(struct Entity*);
 	void (*draw)(struct Entity*);
 
-	dataArr* LocalData;
-	dataArr* InData;
+	pVoidArray* LocalData;
+	pVoidArray* InData;
 	Render* render;
 
 	const char* stScriptPath;
